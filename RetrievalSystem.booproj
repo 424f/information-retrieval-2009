@@ -28,6 +28,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Boo.Lang.Useful" />
+    <Reference Include="nunit.core">
+      <HintPath>C:\Program Files\NUnit 2.4.8\bin\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>C:\Program Files\NUnit 2.4.8\bin\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -45,6 +51,8 @@
   <ItemGroup>
     <Folder Include="src" />
     <Compile Include="src\Program.boo" />
+    <Compile Include="src\Query.boo" />
+    <Compile Include="src\TestOutput.boo" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>
