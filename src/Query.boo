@@ -2,8 +2,7 @@ namespace IR
 import System
 import System.Collections.Generic
 
-abstract class Query():
-		
+abstract class Query():	
 	public virtual def Visit(visitor as IQueryVisitor):
 		pass
 
@@ -23,7 +22,7 @@ class TermQuery(Query):
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitTermQuery(self)
 
-	public def ToString():
+	public def ToString() as string:
 		return Term
 
 class BinaryQuery(Query):
@@ -60,7 +59,6 @@ class OrQuery(BinaryQuery):
 		return "(${Left} OR ${Right})"
 
 class NotQuery(BinaryQuery):
-
 	public def constructor(left as Query, right as Query):
 		super(left, right)
 
@@ -70,70 +68,31 @@ class NotQuery(BinaryQuery):
 	public def ToString():
 		return "(${Left} NOT ${Right})"
 
-enum QueryType:
-	AND = 0
-	OR = 1
-	NOT = 2
-
-class TreeBuilder():
-	_current as BinaryQuery
-	
-	public def constructor():
-		_current = null
-
-	public def AddTerm(q as TermQuery, type as QueryType):
-		if _current == null:
-			if type == QueryType.AND:
-				_current = AndQuery(null, null)
-			if type == QueryType.OR:
-				_current = OrQuery(null, null)
-			if type == QueryType.NOT:
-				_current = NotQuery(null, null)
-
-		if _current.Right == null:
-			_current.Right = q
-		if _current.Left == null:
-			_current.Left = q
-			if type == QueryType.AND:
-				_current = AndQuery(null, _current)
-			if type == QueryType.OR:
-				_current = OrQuery(null, _current)
-			if type == QueryType.NOT:
-				_current = NotQuery(null, _current)
-	
-	public def GetTree():
-		result = _current.Right
-		_current = null
-		return result
-
 class QueryBuilder():
-
-		
 	static public def Process(query as string):
 		type as QueryType
 		terms = List[of string]()
+		items = query.Split((Char.Parse(' '),), StringSplitOptions.RemoveEmptyEntries)
+		raise Exception("Query is empty") if items.Length == 0
 		
-		for item in query.Split(Char.Parse(' ')):
-			if item == "and":
-				type = QueryType.AND
-			elif item == "or":
-				type = QueryType.OR
-			elif item == "not":
-				type = QueryType.NOT
+		# Match a term
+		left as Query = TermQuery(items[0])
+		i = 1
+		while i + 1 < items.Length:
+			op = items[i]
+			term = items[i+1]
+			right = TermQuery(term)
+			if op == "not":
+				left = NotQuery(left, right)
+			elif op == "and":
+				left = AndQuery(left, right)
+			elif op == "or":
+				left = OrQuery(left, right)
 			else:
-				terms.Add(item)
+				raise Exception("Unknown operator '${op}'")	
+			i += 2
 		
-		t = TreeBuilder()
-		qterms = [ TermQuery(term) for term in terms ]
-		for term in qterms[1:]:
-			t.AddTerm(term, type)
+		if i < items.Length:
+			raise Exception("Leftover expression ${items[items.Length-1]}")
 			
-		
-		if type == QueryType.AND:
-			return AndQuery(qterms[0], t.GetTree())
-		if type == QueryType.OR:
-			return OrQuery(qterms[0], t.GetTree())
-		if type == QueryType.NOT:
-			return NotQuery(qterms[0], t.GetTree())
-		else:
-			raise Exception("Malformed Query: " + query)
+		return left

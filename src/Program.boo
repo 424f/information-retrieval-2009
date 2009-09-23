@@ -35,7 +35,7 @@ class RetrievalSystem:
 		for term in Index.Keys:
 			Index[term].Sort()
 
-	public def CreateQueryProcessor():
+	public def CreateQueryProcessor() as QueryProcessor:
 		return QueryProcessor(self)
 
 	public def RetrieveDocumentsForWord(word as string) as List[of Document]:
@@ -65,7 +65,7 @@ class QueryProcessor(IQueryVisitor):
 		result = Pop()
 		return result
 
-	public def VisitAndQuery(andQuery as AndQuery):
+	public def VisitAndQuery(andQuery as AndQuery) as void:
 		andQuery.Left.Visit(self)
 		left = Pop()
 		andQuery.Right.Visit(self)
@@ -75,7 +75,7 @@ class QueryProcessor(IQueryVisitor):
 			result.Add(t) if right.Contains(t)
 		Push(result)
 		
-	public def VisitOrQuery(orQuery as OrQuery):
+	public def VisitOrQuery(orQuery as OrQuery) as void:
 		orQuery.Left.Visit(self)
 		orQuery.Right.Visit(self)
 		left = Pop()
@@ -85,7 +85,7 @@ class QueryProcessor(IQueryVisitor):
 			left.Add(t) if not left.Contains(t)
 		Push(left)
 		
-	public def VisitNotQuery(notQuery as NotQuery):
+	public def VisitNotQuery(notQuery as NotQuery) as void:
 		notQuery.Left.Visit(self)
 		notQuery.Right.Visit(self)
 		left = Pop()
@@ -95,14 +95,19 @@ class QueryProcessor(IQueryVisitor):
 			result.Add(t) if not right.Contains(t)
 		Push(result)
 		
-	public def VisitTermQuery(termQuery as TermQuery):
+	public def VisitTermQuery(termQuery as TermQuery) as void:
 		Push(RetrievalSystem.RetrieveDocumentsForWord(termQuery.Term))
 	
-	protected def Push(terms as List[of Document]):
+	protected def Push(terms as List[of Document]) as void:
 		Stack.Add(terms)
 		
 	protected def Pop() as List[of Document]:
 		item = Stack[Stack.Count-1]
+		System.Console.Write("[")
+		Console.Write(null != item.Find({doc as Document | doc.Title == "doc100"}))
+		/*for i in item:
+			Console.Write("${i.Title}, ")*/
+		System.Console.WriteLine("]")
 		Stack.RemoveAt(Stack.Count-1)
 		return item
 
@@ -116,6 +121,8 @@ class Document(IComparable[of Document]):
 	[Property(Path)] _Path as string
 	"""The path where this document is located"""
 	
+	static SplitRule = regex("[^a-zA-Z0-9]")
+	
 	public def constructor(retrievalSystem as RetrievalSystem, path as string):
 		Path = path
 		Title = IO.Path.GetFileName(path)
@@ -126,9 +133,11 @@ class Document(IComparable[of Document]):
 		lines = File.ReadAllLines(Path)
 		terms = List[of Term]()
 		for line in lines:
-			words = line.Split((" ", ",", ".", "!", "?", "-"), StringSplitOptions.RemoveEmptyEntries)
+			words = SplitRule.Split(line)
 			for word in words:
-				term = RetrievalSystem.GetTerm(word.ToUpper())
+				word = word.ToUpper().Trim()
+				continue if word.Length == 0
+				term = RetrievalSystem.GetTerm(word)
 				i = terms.BinarySearch(term)
 				if i < 0:
 					terms.Insert(~i, term)						
