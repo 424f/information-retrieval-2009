@@ -8,9 +8,10 @@ abstract class Query():
 		pass
 
 interface IQueryVisitor:
-	def VisitAndQuery(andQuery as Query)
-	def VisitOrQuery(orQuery as Query)
-	def VisitNotQuery(notQuery as Query)
+	def VisitAndQuery(andQuery as AndQuery)
+	def VisitOrQuery(orQuery as OrQuery)
+	def VisitNotQuery(notQuery as NotQuery)
+	def VisitTermQuery(termQuery as TermQuery)
 
 class TermQuery(Query):
 	[Property(Term)]
@@ -18,6 +19,9 @@ class TermQuery(Query):
 	
 	public def constructor(term as string):
 		_term = term
+		
+	public override def Visit(visitor as IQueryVisitor):
+		visitor.VisitTermQuery(self)
 
 class BinaryQuery(Query):
 	[Property(Left)]
@@ -43,7 +47,6 @@ class AndQuery(BinaryQuery):
 
 
 class OrQuery(BinaryQuery):
-
 	public def constructor(left as Query, right as Query):
 		super(left, right)
 		

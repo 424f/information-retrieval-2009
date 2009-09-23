@@ -24,7 +24,7 @@ class RetrievalSystem:
 			Documents.Add(doc)
 			
 			print "Loaded ${doc.Title} with ${terms.Count} terms."
-		
+
 	public def CreateQueryProcessor():
 		return QueryProcessor(self)
 
@@ -33,14 +33,14 @@ class RetrievalSystem:
 			return Index[term]
 		return List[of string]()
 
-class QueryProcessor:
+class QueryProcessor(IQueryVisitor):
 	protected RetrievalSystem as RetrievalSystem
-	private Stack = List[of List[of string]]()
+	private Stack = List[of List[of Document]]()
 	
 	public def constructor(retrievalSystem as RetrievalSystem):
 		RetrievalSystem = retrievalSystem
 
-	public def ProcessQuery(query as Query) as List[of string]:
+	public def ProcessQuery(query as Query) as List[of Document]:
 		query.Visit(self)
 		result = Pop()
 		return result
@@ -50,14 +50,14 @@ class QueryProcessor:
 		andQuery.Right.Visit(self)
 		left = Pop()
 		right = Pop()
-		result = List[of string]()
+		result = List[of Document]()
 		for t in left:
 			result.Add(t) if right.Contains(t)
 		Push(result)
 		
 	public def VisitOrQuery(orQuery as OrQuery):
-		andQuery.Left.Visit(self)
-		andQuery.Right.Visit(self)
+		orQuery.Left.Visit(self)
+		orQuery.Right.Visit(self)
 		left = Pop()
 		right = Pop()
 		left.AddRange(right)
@@ -66,11 +66,11 @@ class QueryProcessor:
 		Push(left)
 		
 	public def VisitNotQuery(notQuery as NotQuery):
-		andQuery.Left.Visit(self)
-		andQuery.Right.Visit(self)
+		notQuery.Left.Visit(self)
+		notQuery.Right.Visit(self)
 		left = Pop()
 		right = Pop()
-		result = List[of string]()
+		result = List[of Document]()
 		for t in left:
 			result.Add(t) if not right.Contains(t)
 		Push(result)
@@ -78,15 +78,15 @@ class QueryProcessor:
 	public def VisitTermQuery(termQuery as TermQuery):
 		Push(RetrievalSystem.RetrieveDocumentsForTerm(termQuery.Term))
 	
-	protected def Push(terms as List[of string]):
+	protected def Push(terms as List[of Document]):
 		Stack.Add(terms)
 		
-	protected def Pop() as List[of string]:
+	protected def Pop() as List[of Document]:
 		item = Stack[Stack.Count-1]
 		Stack.RemoveAt(Stack.Count-1)
 		return item
 
-class Document:
+class Document(IComparable[of Document]):
 	[Getter(RetrievalSystem)] _RetrievalSystem as RetrievalSystem
 	"""The retrieval system to which this document belongs"""
 	
@@ -115,8 +115,12 @@ class Document:
 	public def ReadContent() as string:
 		return File.ReadAllText(Path)
 
+	public def CompareTo(other as Document) as int:
+		return self.Title.CompareTo(other.Title)
+
 rs = RetrievalSystem("data/TIME/Docs")
 processor = rs.CreateQueryProcessor()
 query = AndQuery(TermQuery("VIET"), AndQuery(TermQuery("NAM"), TermQuery("COUP")))
-print processor.ProcessQuery(query)
+for doc in processor.ProcessQuery(query):
+	print doc.Title
 System.Console.ReadKey()
