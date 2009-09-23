@@ -2,8 +2,8 @@
 <project name="Information Retrieval 2009 Project" default="compile">
 
     <target name="compile">
-        <booc target="exe" output="build/booi.exe" tracelevel="Verbose" verbose="true">
-           <sources basedir="src/booi">
+        <booc target="exe" output="build/ir.exe">
+           <sources basedir="src/">
               <include name="*.boo" />
            </sources>
         </booc>
