@@ -9,7 +9,8 @@ class TestOutput():
 	
 	[TestFixtureSetUp] 
 	public def Init():
-		RetrievalSystem = RetrievalSystem("../../data/TIME/Docs/")
+		RetrievalSystem = RetrievalSystem()
+		RetrievalSystem.CreateIndex("../../data/TIME/Docs/")
 
 	[Test]
 	public def TestQ23():

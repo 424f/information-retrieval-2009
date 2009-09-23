@@ -9,7 +9,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <Strict>True</Strict>
     <SourceAnalysisOverrideSettingsFile>C:\Users\Bo\AppData\Roaming\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
-    <StartWorkingDirectory>.</StartWorkingDirectory>
+    <StartWorkingDirectory>./</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -52,6 +52,7 @@
     <Folder Include="src" />
     <Compile Include="src\Program.boo" />
     <Compile Include="src\Query.boo" />
+    <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\TestOutput.boo" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
