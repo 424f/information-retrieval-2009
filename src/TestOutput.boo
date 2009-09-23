@@ -63,7 +63,7 @@ class TestOutput():
 	
 	public def RunTest(query as string, expected as (string)):
 		qp = RetrievalSystem.CreateQueryProcessor()
-		q as Query = QueryBuilder.Process(query)
+		q as Query = QueryBuilder.Process(query, ParseDirection.ParseFromLeft)
 		print q
 		result = qp.ProcessQuery(q)
 		

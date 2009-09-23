@@ -68,11 +68,19 @@ class NotQuery(BinaryQuery):
 	public def ToString():
 		return "(${Left} NOT ${Right})"
 
+enum ParseDirection:
+	ParseFromLeft
+	ParseFromRight
+
 class QueryBuilder():
-	static public def Process(query as string):
+	static public def Process(query as string, direction as ParseDirection):
 		terms = List[of string]()
 		items = query.Split((Char.Parse(' '),), StringSplitOptions.RemoveEmptyEntries)
 		raise Exception("Query is empty") if items.Length == 0
+		
+		# Reverse for parsing from right
+		if direction == ParseDirection.ParseFromRight:
+			Array.Reverse(items)
 		
 		# Match a term
 		left as Query = TermQuery(items[0])

@@ -1,10 +1,14 @@
 namespace IR
 
 import System
+import System.Collections.Generic
 
 rs as RetrievalSystem
 documentsProcessed = 0
 termsProcessed = 0
+
+def GetTicks() as double:
+	return DateTime.Now.Ticks / 10000.0
 
 def PrintProgress(sender as object, e as DocumentLoadedArgs):
 	BarWidth = 20
@@ -61,11 +65,21 @@ while input != "quit":
 		print "Shortest posting list:"
 		print "  ${shortestPostingList} document(s)"
 	else:
-		query = QueryBuilder.Process(input)
-		for doc in processor.ProcessQuery(query):
-			print doc.Title
+		result as List[of Document]
+		
+		for dir in (ParseDirection.ParseFromLeft, ParseDirection.ParseFromRight):
+			query = QueryBuilder.Process(input, dir)
+			before = GetTicks()
+			result = processor.ProcessQuery(query)
+			dt = GetTicks() - before
+			print "(${dir} took ${dt}ms)"
+		
+		for doc in result:
+			pass //System.Console.Write(doc.Title + " ")
 			# We can now actually retrieve the content
 			#print doc.ReadContent()
 			#print "---"
+		print ""
+		print "Displayed ${result.Count} results"
 	print ""
 System.Console.ReadKey()
