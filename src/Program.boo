@@ -72,10 +72,10 @@ while input != "quit":
 			before = GetTicks()
 			result = processor.ProcessQuery(query)
 			dt = GetTicks() - before
-			print "(${dir} took ${dt}ms)"
+			print "${dir}: ${dt}ms "
 		
 		for doc in result:
-			pass //System.Console.Write(doc.Title + " ")
+			System.Console.Write(doc.Title + " ")
 			# We can now actually retrieve the content
 			#print doc.ReadContent()
 			#print "---"

@@ -10,6 +10,13 @@ struct Term(IComparable[of Term]):
 	public def CompareTo(other as Term) as int:
 		return self.ID.CompareTo(other.ID)
 		
+	public override def Equals(other as object) as bool:
+		return false if not other isa Term
+		return self.ID == cast(Term, other).ID
+	
+	public override def GetHashCode() as int:
+		return ID.GetHashCode()
+	
 class DocumentLoadedArgs(EventArgs):
 	[Getter(Document)] _Document as Document
 	[Getter(NumTerms)] _NumTerms as int
@@ -103,7 +110,6 @@ class QueryProcessor(IQueryVisitor):
 		orQuery.Right.Visit(self)
 		left = Pop()
 		right = Pop()
-		left.AddRange(right)
 		for t in right:
 			left.Add(t) if not left.Contains(t)
 		Push(left)
