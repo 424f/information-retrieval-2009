@@ -26,15 +26,18 @@ class BinaryQuery(Query):
 	[Property(Right)]
 	_right as Query
 
-	public def constructor():
-		pass
-						
-class AndQuery(BinaryQuery):
-
 	public def constructor(left as Query, right as Query):
 		_left = left
 		_right = right
-
+	
+	public def ToString():
+		return "(l: " + _left + ", r: " + _right + ")"
+						
+class AndQuery(BinaryQuery):
+	
+	public def constructor(left as Query, right as Query):
+		super(left, right)
+		
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitAndQuery(self)
 
@@ -42,9 +45,7 @@ class AndQuery(BinaryQuery):
 class OrQuery(BinaryQuery):
 
 	public def constructor(left as Query, right as Query):
-		_left = left
-		_right = right
-
+		super(left, right)
 		
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitOrQuery(self)
@@ -53,12 +54,28 @@ class OrQuery(BinaryQuery):
 class NotQuery(BinaryQuery):
 
 	public def constructor(left as Query, right as Query):
-		_left = left
-		_right = right
+		super(left, right)
 
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitNotQuery(self)
 
+
+class TreeBuilder():
+	_current as BinaryQuery
+	
+	public def constructor():
+		_current = BinaryQuery(null, null)
+
+	public def AddTerm(q as TermQuery):
+	
+		if _current.Right == null:
+			_current.Right = q
+		if _current.Left == null:
+			_current.Left = q
+			_current = BinaryQuery(null, _current)
+	
+	public def GetTree():
+		return _current.Right
 
 class QueryBuilder():
 	enum QueryType:
@@ -69,7 +86,7 @@ class QueryBuilder():
 	static public def Process(query as string):
 		type as QueryType
 		terms = List[of string]()
-
+		
 		for item in query.Split(Char.Parse(' ')):
 			if item == "and":
 				type = QueryType.AND
@@ -80,34 +97,21 @@ class QueryBuilder():
 			else:
 				terms.Add(item)
 		
+		t = TreeBuilder()
 		qterms = [ TermQuery(term) for term in terms ]
-		
-		right = null
-		left = null
-		node = BinaryQuery()
-		i = 0
 		for term in qterms[1:]:
-			if i % 2 == 0:
-				node.Left = term
-			else:
-				node.Left = term
+			t.AddTerm(term)
 			
-			i += 1
 		
-		/*if len(terms[1:]) == 1:
-			right = TermQuery(terms[-1])
-		elif len(terms[1:]) > 1:*/
-			
-		/*	
 		if type == QueryType.AND:
-			return AndQuery(terms[0], right)
+			return AndQuery(qterms[0], t.GetTree())
 		if type == QueryType.OR:
-			return OrQuery(terms[0], right)
+			return OrQuery(qterms[0], t.GetTree())
 		if type == QueryType.NOT:
-			return NotQuery(left, right)
+			return NotQuery(qterms[0], t.GetTree())
 		else:
-			raise Exception("Malformed Query: " + query)*/
+			raise Exception("Malformed Query: " + query)
 
 
-//q = QueryBuilder.Process("HOT and LINE and PROPOSAL")
-
+q = QueryBuilder.Process("HOT and LINE and PROPOSAL")
+print q
