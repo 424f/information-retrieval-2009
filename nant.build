@@ -1,6 +1,8 @@
-
 <project name="Information Retrieval 2009 Project" default="compile">
-
+    <include buildfile="nant.settings" />
+	
+	<loadtasks assembly="${boo.bin}/Boo.NAnt.Tasks.dll" /> 
+	
     <target name="compile">
         <booc target="exe" output="build/ir.exe">
            <sources basedir="src/">
