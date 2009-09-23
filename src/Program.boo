@@ -1,3 +1,5 @@
+namespace IR
+
 import System
 import System.IO
 
