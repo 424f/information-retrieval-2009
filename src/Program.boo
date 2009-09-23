@@ -87,8 +87,8 @@ class QueryProcessor(IQueryVisitor):
 		
 	public def VisitNotQuery(notQuery as NotQuery) as void:
 		notQuery.Left.Visit(self)
-		notQuery.Right.Visit(self)
 		left = Pop()
+		notQuery.Right.Visit(self)
 		right = Pop()
 		result = List[of Document]()
 		for t in left:

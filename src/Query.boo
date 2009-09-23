@@ -70,7 +70,6 @@ class NotQuery(BinaryQuery):
 
 class QueryBuilder():
 	static public def Process(query as string):
-		type as QueryType
 		terms = List[of string]()
 		items = query.Split((Char.Parse(' '),), StringSplitOptions.RemoveEmptyEntries)
 		raise Exception("Query is empty") if items.Length == 0
