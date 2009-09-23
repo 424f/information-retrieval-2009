@@ -7,10 +7,16 @@ documentsProcessed = 0
 termsProcessed = 0
 
 def PrintProgress(sender as object, e as DocumentLoadedArgs):
+	BarWidth = 20
 	documentsProcessed += 1
 	termsProcessed += e.NumTerms
-	Console.Write("\r")
-	Console.Write("Processed ${documentsProcessed} / ${rs.NumDocuments} documents")
+	Console.Write("\r[")
+	percent = cast(single, documentsProcessed) / rs.NumDocuments
+	numBars = Math.Min(BarWidth, cast(int, percent * BarWidth))
+	Console.Write("#" * numBars)
+	if numBars < BarWidth:
+		Console.Write(" " * (BarWidth - numBars))
+	Console.Write("] Creating index (${documentsProcessed} / ${rs.NumDocuments} documents)")
 
 print ""
 print "AWESOME RETRIEVAL SYSTEM 2.0 BETA"
