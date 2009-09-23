@@ -3,13 +3,8 @@ import System
 import System.Collections.Generic
 
 abstract class Query():
-	[Property(Terms)]
-	_terms as List[of string]
-
-	public def constructor(terms as List[of string]):
-		_terms = terms
 		
-	public virtual def Visit[of T](visitor as IQueryVisitor):
+	public virtual def Visit(visitor as IQueryVisitor):
 		pass
 
 interface IQueryVisitor:
@@ -17,33 +12,52 @@ interface IQueryVisitor:
 	def VisitOrQuery(orQuery as Query)
 	def VisitNotQuery(notQuery as Query)
 
+class TermQuery(Query):
+	[Property(Term)]
+	_term as string
+	
+	public def constructor(term as string):
+		_term = term
+
+class BinaryQuery(Query):
+	[Property(Left)]
+	_left as Query
+	
+	[Property(Right)]
+	_right as Query
+
+	public def constructor():
+		pass
+						
+class AndQuery(BinaryQuery):
+
+	public def constructor(left as Query, right as Query):
+		_left = left
+		_right = right
+
+	public override def Visit(visitor as IQueryVisitor):
+		visitor.VisitAndQuery(self)
+
+
+class OrQuery(BinaryQuery):
+
+	public def constructor(left as Query, right as Query):
+		_left = left
+		_right = right
 
 		
-class AndQuery(Query):
+	public override def Visit(visitor as IQueryVisitor):
+		visitor.VisitOrQuery(self)
 
-	public def constructor(terms as List[of string]):
-		super(terms)
+
+class NotQuery(BinaryQuery):
+
+	public def constructor(left as Query, right as Query):
+		_left = left
+		_right = right
 
 	public override def Visit(visitor as IQueryVisitor):
-		return visitor.VisitAndQuery(self)
-
-
-class OrQuery(Query):
-
-	public def constructor(terms as List[of string]):
-		super(terms)
-		
-	public override def Visit(visitor as IQueryVisitor):
-		return visitor.VisitOrQuery(self)
-
-
-class NotQuery(Query):
-
-	public def constructor(terms as List[of string]):
-		super(terms)
-
-	public override def Visit(visitor as IQueryVisitor):
-		return visitor.VisitNotQuery(self)
+		visitor.VisitNotQuery(self)
 
 
 class QueryBuilder():
@@ -66,16 +80,34 @@ class QueryBuilder():
 			else:
 				terms.Add(item)
 		
+		qterms = [ TermQuery(term) for term in terms ]
+		
+		right = null
+		left = null
+		node = BinaryQuery()
+		i = 0
+		for term in qterms[1:]:
+			if i % 2 == 0:
+				node.Left = term
+			else:
+				node.Left = term
+			
+			i += 1
+		
+		/*if len(terms[1:]) == 1:
+			right = TermQuery(terms[-1])
+		elif len(terms[1:]) > 1:*/
+			
+		/*	
 		if type == QueryType.AND:
-			return AndQuery(terms)
+			return AndQuery(terms[0], right)
 		if type == QueryType.OR:
-			return OrQuery(terms)
+			return OrQuery(terms[0], right)
 		if type == QueryType.NOT:
-			return NotQuery(terms)
+			return NotQuery(left, right)
 		else:
-			raise Exception("Malformed Query: " + query)
+			raise Exception("Malformed Query: " + query)*/
 
 
-q = QueryBuilder.Process("HOT and LINE and PROPOSAL")
-for term in  q.Terms:
-	print term
+//q = QueryBuilder.Process("HOT and LINE and PROPOSAL")
+
