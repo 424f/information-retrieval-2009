@@ -9,12 +9,11 @@ class TestOutput():
 	
 	[TestFixtureSetUp] 
 	public def Init():
-		RetrievalSystem = RetrievalSystem("../data/TIME/Docs/")
+		RetrievalSystem = RetrievalSystem("../../data/TIME/Docs/")
 
 	[Test]
 	public def TestQ23():
 		RunTest("COUNTRY or NEW or JOIN or UNITED or NATIONS", ("doc10", "doc100", "doc104", "doc107", "doc108", "doc109", "doc11", "doc110", "doc112", "doc113", "doc114", "doc115", "doc116", "doc118", "doc120", "doc121", "doc122", "doc125", "doc126", "doc127", "doc128", "doc13", "doc131", "doc132", "doc135", "doc136", "doc138", "doc139", "doc14", "doc140", "doc142", "doc144", "doc145", "doc146", "doc147", "doc148", "doc15", "doc151", "doc152", "doc154", "doc155", "doc156", "doc157", "doc158", "doc159", "doc160", "doc162", "doc164", "doc167", "doc168", "doc170", "doc171", "doc174", "doc175", "doc176", "doc177", "doc18", "doc182", "doc184", "doc185", "doc188", "doc189", "doc190", "doc192", "doc193", "doc194", "doc195", "doc196", "doc198", "doc20", "doc201", "doc202", "doc205", "doc207", "doc208", "doc209", "doc21", "doc210", "doc211", "doc212", "doc214", "doc215", "doc216", "doc22", "doc221", "doc222", "doc223", "doc224", "doc225", "doc226", "doc227", "doc228", "doc229", "doc230", "doc231", "doc233", "doc234", "doc235", "doc237", "doc238", "doc24", "doc240", "doc241", "doc242", "doc243", "doc245", "doc247", "doc248", "doc25", "doc250", "doc251", "doc252", "doc253", "doc254", "doc255", "doc256", "doc257", "doc258", "doc26", "doc260", "doc261", "doc262", "doc264", "doc265", "doc266", "doc267", "doc269", "doc27", "doc270", "doc271", "doc272", "doc274", "doc275", "doc276", "doc277", "doc278", "doc280", "doc281", "doc283", "doc284", "doc285", "doc286", "doc290", "doc291", "doc292", "doc293", "doc294", "doc295", "doc297", "doc298", "doc300", "doc301", "doc302", "doc303", "doc304", "doc305", "doc306", "doc307", "doc308", "doc309", "doc313", "doc314", "doc315", "doc316", "doc319", "doc32", "doc320", "doc321", "doc323", "doc326", "doc327", "doc328", "doc329", "doc331", "doc333", "doc334", "doc337", "doc339", "doc340", "doc341", "doc342", "doc343", "doc345", "doc346", "doc347", "doc348", "doc349", "doc35", "doc350", "doc351", "doc352", "doc355", "doc356", "doc357", "doc358", "doc359", "doc36", "doc360", "doc361", "doc363", "doc366", "doc367", "doc369", "doc370", "doc371", "doc373", "doc374", "doc377", "doc378", "doc379", "doc381", "doc382", "doc383", "doc384", "doc385", "doc386", "doc387", "doc388", "doc389", "doc39", "doc390", "doc391", "doc392", "doc393", "doc394", "doc396", "doc397", "doc398", "doc399", "doc4", "doc40", "doc400", "doc401", "doc403", "doc404", "doc406", "doc407", "doc408", "doc409", "doc41", "doc410", "doc411", "doc413", "doc414", "doc415", "doc416", "doc417", "doc418", "doc419", "doc420", "doc421", "doc424", "doc425", "doc43", "doc45", "doc46", "doc47", "doc48", "doc49", "doc50", "doc52", "doc53", "doc54", "doc55", "doc56", "doc57", "doc58", "doc59", "doc6", "doc60", "doc61", "doc63", "doc64", "doc65", "doc66", "doc69", "doc7", "doc70", "doc71", "doc72", "doc73", "doc74", "doc75", "doc76", "doc78", "doc79", "doc80", "doc81", "doc82", "doc84", "doc86", "doc87", "doc88", "doc89", "doc90", "doc92", "doc94", "doc96", "doc99", ))
-
 
 	[Test]
 	public def TestQ48():
@@ -64,6 +63,7 @@ class TestOutput():
 	public def RunTest(query as string, expected as (string)):
 		qp = RetrievalSystem.CreateQueryProcessor()
 		q as Query = QueryBuilder.Process(query)
+		print q
 		result = qp.ProcessQuery(q)
 		
 		// Make sure no unexpected documents were retrieved

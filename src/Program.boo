@@ -4,11 +4,20 @@ import System
 import System.IO
 import System.Collections.Generic
 
+struct Term(IComparable[of Term]):
+	public ID as int
+	
+	public def CompareTo(other as Term) as int:
+		return self.ID.CompareTo(other.ID)
+		
 class RetrievalSystem:
 	protected Documents = List[of Document]()
-	protected Index = Dictionary[of string, List[of Document]]()
+	protected Index = Dictionary[of Term, List[of Document]]()
+	protected Terms = Dictionary[of string, Term]()
+	protected NumTerms = 0
 
 	public def constructor(directory as string):
+		# Read all files
 		dirInfo = DirectoryInfo(directory)
 		files = dirInfo.GetFiles()
 		for f in files:
@@ -19,19 +28,30 @@ class RetrievalSystem:
 				if not Index.ContainsKey(term):
 					Index.Add(term, List[of Document]())
 				Index[term].Add(doc)
-				Index[term].Sort() # TODO: inefficient
 			
-			Documents.Add(doc)
-			
+			Documents.Add(doc)			
 			print "Loaded ${doc.Title} with ${terms.Count} terms."
+		# Sort indices
+		for term in Index.Keys:
+			Index[term].Sort()
 
 	public def CreateQueryProcessor():
 		return QueryProcessor(self)
 
-	public def RetrieveDocumentsForTerm(term as string):
+	public def RetrieveDocumentsForWord(word as string) as List[of Document]:
+		word = word.Trim().ToUpper()
+		term = GetTerm(word)
 		if Index.ContainsKey(term):
 			return Index[term]
-		return List[of string]()
+		return List[of Document]()
+
+	public def GetTerm(word as string) as Term:
+		if not Terms.ContainsKey(word):
+			term = Term()
+			term.ID = NumTerms
+			NumTerms += 1
+			Terms.Add(word, term)
+		return Terms[word]
 
 class QueryProcessor(IQueryVisitor):
 	protected RetrievalSystem as RetrievalSystem
@@ -47,8 +67,8 @@ class QueryProcessor(IQueryVisitor):
 
 	public def VisitAndQuery(andQuery as AndQuery):
 		andQuery.Left.Visit(self)
-		andQuery.Right.Visit(self)
 		left = Pop()
+		andQuery.Right.Visit(self)
 		right = Pop()
 		result = List[of Document]()
 		for t in left:
@@ -76,7 +96,7 @@ class QueryProcessor(IQueryVisitor):
 		Push(result)
 		
 	public def VisitTermQuery(termQuery as TermQuery):
-		Push(RetrievalSystem.RetrieveDocumentsForTerm(termQuery.Term))
+		Push(RetrievalSystem.RetrieveDocumentsForWord(termQuery.Term))
 	
 	protected def Push(terms as List[of Document]):
 		Stack.Add(terms)
@@ -99,16 +119,19 @@ class Document(IComparable[of Document]):
 	public def constructor(retrievalSystem as RetrievalSystem, path as string):
 		Path = path
 		Title = IO.Path.GetFileName(path)
+		_RetrievalSystem = retrievalSystem
 	
-	public def Process() as List[of string]:
+	public def Process() as List[of Term]:
 	"""Process the document to extract all terms in it"""
 		lines = File.ReadAllLines(Path)
-		terms = List[of string]()
+		terms = List[of Term]()
 		for line in lines:
 			words = line.Split((" ", ",", ".", "!", "?", "-"), StringSplitOptions.RemoveEmptyEntries)
 			for word in words:
-				word = string.Intern(word.ToUpper())
-				terms.Add(word) if not terms.Contains(word)
+				term = RetrievalSystem.GetTerm(word.ToUpper())
+				i = terms.BinarySearch(term)
+				if i < 0:
+					terms.Insert(~i, term)						
 		terms.Sort()
 		return terms
 			

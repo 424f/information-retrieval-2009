@@ -50,9 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src" />
+    <Compile Include="src\ParsingTest.boo" />
     <Compile Include="src\Program.boo" />
     <Compile Include="src\Query.boo" />
     <Compile Include="src\TestOutput.boo" />
+    <Content Include="ProfilingSessions\Session20090923_181618.sdps" />
+    <Content Include="ProfilingSessions\Session20090923_183359.sdps" />
+    <Content Include="ProfilingSessions\Session20090923_184627.sdps" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

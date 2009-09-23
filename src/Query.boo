@@ -23,6 +23,9 @@ class TermQuery(Query):
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitTermQuery(self)
 
+	public def ToString():
+		return Term
+
 class BinaryQuery(Query):
 	[Property(Left)]
 	_left as Query
@@ -33,10 +36,7 @@ class BinaryQuery(Query):
 	public def constructor(left as Query, right as Query):
 		_left = left
 		_right = right
-	
-	public def ToString():
-		return "(l: " + _left + ", r: " + _right + ")"
-						
+							
 class AndQuery(BinaryQuery):
 	
 	public def constructor(left as Query, right as Query):
@@ -44,6 +44,9 @@ class AndQuery(BinaryQuery):
 		
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitAndQuery(self)
+
+	public def ToString():
+		return "(${Left} AND ${Right})"
 
 
 class OrQuery(BinaryQuery):
@@ -53,6 +56,8 @@ class OrQuery(BinaryQuery):
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitOrQuery(self)
 
+	public def ToString():
+		return "(${Left} OR ${Right})"
 
 class NotQuery(BinaryQuery):
 
@@ -62,29 +67,47 @@ class NotQuery(BinaryQuery):
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitNotQuery(self)
 
+	public def ToString():
+		return "(${Left} NOT ${Right})"
+
+enum QueryType:
+	AND = 0
+	OR = 1
+	NOT = 2
 
 class TreeBuilder():
 	_current as BinaryQuery
 	
 	public def constructor():
-		_current = BinaryQuery(null, null)
+		_current = null
 
-	public def AddTerm(q as TermQuery):
-	
+	public def AddTerm(q as TermQuery, type as QueryType):
+		if _current == null:
+			if type == QueryType.AND:
+				_current = AndQuery(null, null)
+			if type == QueryType.OR:
+				_current = OrQuery(null, null)
+			if type == QueryType.NOT:
+				_current = NotQuery(null, null)
+
 		if _current.Right == null:
 			_current.Right = q
 		if _current.Left == null:
 			_current.Left = q
-			_current = BinaryQuery(null, _current)
+			if type == QueryType.AND:
+				_current = AndQuery(null, _current)
+			if type == QueryType.OR:
+				_current = OrQuery(null, _current)
+			if type == QueryType.NOT:
+				_current = NotQuery(null, _current)
 	
 	public def GetTree():
-		return _current.Right
+		result = _current.Right
+		_current = null
+		return result
 
 class QueryBuilder():
-	enum QueryType:
-		AND = 0
-		OR = 1
-		NOT = 2
+
 		
 	static public def Process(query as string):
 		type as QueryType
@@ -103,7 +126,7 @@ class QueryBuilder():
 		t = TreeBuilder()
 		qterms = [ TermQuery(term) for term in terms ]
 		for term in qterms[1:]:
-			t.AddTerm(term)
+			t.AddTerm(term, type)
 			
 		
 		if type == QueryType.AND:
@@ -114,7 +137,3 @@ class QueryBuilder():
 			return NotQuery(qterms[0], t.GetTree())
 		else:
 			raise Exception("Malformed Query: " + query)
-
-
-q = QueryBuilder.Process("HOT and LINE and PROPOSAL")
-print q
