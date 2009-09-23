@@ -22,7 +22,7 @@ class RetrievalSystem:
 	protected Documents = List[of Document]()
 	protected Index = Dictionary[of Term, List[of Document]]()
 	protected Terms = Dictionary[of string, Term]()
-	protected NumTerms = 0
+	[Getter(NumTerms)] _NumTerms = 0
 	[Getter(NumDocuments)] _NumDocuments = 0
 
 	public event DocumentLoaded as EventHandler[of DocumentLoadedArgs]
@@ -56,15 +56,23 @@ class RetrievalSystem:
 	public def RetrieveDocumentsForWord(word as string) as List[of Document]:
 		word = word.Trim().ToUpper()
 		term = GetTerm(word)
+		return RetrieveDocumentsForTerm(term)
+		
+	public def RetrieveDocumentsForTerm(term as Term) as List[of Document]:
 		if Index.ContainsKey(term):
 			return Index[term]
 		return List[of Document]()
+	
+	public def RetrieveDocumentsForTerm(termId as int) as List[of Document]:
+		term = Term()
+		term.ID = termId
+		return RetrieveDocumentsForTerm(term)
 
 	public def GetTerm(word as string) as Term:
 		if not Terms.ContainsKey(word):
 			term = Term()
 			term.ID = NumTerms
-			NumTerms += 1
+			_NumTerms += 1
 			Terms.Add(word, term)
 		return Terms[word]
 
