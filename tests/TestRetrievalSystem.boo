@@ -1,10 +1,11 @@
-namespace IR
+namespace IR.Test
+
 import System
 import NUnit.Framework
-
+import IR
 
 [TestFixture()]
-class TestOutput():
+class TestRetrievalSystem():
 	protected RetrievalSystem as RetrievalSystem
 	
 	[TestFixtureSetUp] 

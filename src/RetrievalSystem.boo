@@ -90,35 +90,28 @@ class QueryProcessor(IQueryVisitor):
 	public def constructor(retrievalSystem as RetrievalSystem):
 		RetrievalSystem = retrievalSystem
 
+	public def Accept(query as Query) as List[of Document]:
+		query.Visit(self)
+		return Pop()
+
 	public def ProcessQuery(query as Query) as List[of Document]:
 		query.Visit(self)
 		result = Pop()
 		return result
 
 	public def VisitAndQuery(andQuery as AndQuery) as void:
-		andQuery.Left.Visit(self)
-		left = Pop()
-		andQuery.Right.Visit(self)
-		right = Pop()
-		result = List[of Document]()
-		for t in left:
-			result.Add(t) if right.Contains(t)
-		Push(result)
+		left = Accept(andQuery.Left)
+		right = Accept(andQuery.Right)
+		Push(SetUtils[of Document].Intersect(left, right))
 		
 	public def VisitOrQuery(orQuery as OrQuery) as void:
-		orQuery.Left.Visit(self)
-		orQuery.Right.Visit(self)
-		left = Pop()
-		right = Pop()
-		for t in right:
-			left.Add(t) if not left.Contains(t)
-		Push(left)
+		left = Accept(orQuery.Left)
+		right = Accept(orQuery.Right)
+		Push(SetUtils[of Document].Union(left, right))
 		
 	public def VisitNotQuery(notQuery as NotQuery) as void:
-		notQuery.Left.Visit(self)
-		left = Pop()
-		notQuery.Right.Visit(self)
-		right = Pop()
+		left = Accept(notQuery.Left)
+		right = Accept(notQuery.Right)
 		result = List[of Document]()
 		for t in left:
 			result.Add(t) if not right.Contains(t)
@@ -135,9 +128,12 @@ class QueryProcessor(IQueryVisitor):
 		Stack.RemoveAt(Stack.Count-1)
 		return item
 
-class Document(IComparable[of Document]):
+class Document(IComparable[of Document], IComparable):
 	[Getter(RetrievalSystem)] _RetrievalSystem as RetrievalSystem
 	"""The retrieval system to which this document belongs"""
+	
+	[Getter(Id)] _Id as int
+	"""Unique identifier for this instance"""
 	
 	[Property(Title)] _Title as string
 	"""This document's title"""
@@ -145,12 +141,16 @@ class Document(IComparable[of Document]):
 	[Property(Path)] _Path as string
 	"""The path where this document is located"""
 	
-	static SplitRule = regex("[^a-zA-Z0-9]")
+	static protected NumDocuments = 0
+	static protected SplitRule = regex("[^a-zA-Z0-9]")
 	
 	public def constructor(retrievalSystem as RetrievalSystem, path as string):
 		Path = path
 		Title = IO.Path.GetFileName(path)
 		_RetrievalSystem = retrievalSystem
+		
+		NumDocuments += 1
+		_Id = NumDocuments
 	
 	public def Process() as List[of Term]:
 	"""Process the document to extract all terms in it"""
@@ -165,7 +165,6 @@ class Document(IComparable[of Document]):
 				i = terms.BinarySearch(term)
 				if i < 0:
 					terms.Insert(~i, term)						
-		terms.Sort()
 		return terms
 			
 	public def ReadContent() as string:
@@ -173,3 +172,10 @@ class Document(IComparable[of Document]):
 
 	public def CompareTo(other as Document) as int:
 		return self.Title.CompareTo(other.Title)
+
+	public def CompareTo(other as object) as int:
+		return CompareTo(other as Document)
+
+	public static def op_LessThan(d1 as Document, d2 as Document):
+		return d1.CompareTo(d2) < 0
+ 

@@ -49,11 +49,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="tests" />
     <Folder Include="src" />
     <Compile Include="src\Program.boo" />
     <Compile Include="src\Query.boo" />
     <Compile Include="src\RetrievalSystem.boo" />
-    <Compile Include="src\TestOutput.boo" />
+    <Compile Include="src\SetUtils.boo" />
+    <Compile Include="tests\TestRetrievalSystem.boo" />
+    <Compile Include="tests\TestSetUtils.boo" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>
