@@ -66,20 +66,22 @@ while input != "quit":
 		print "  ${shortestPostingList} document(s)"
 	else:
 		result as List[of Document]
-		
-		for dir in (ParseDirection.ParseFromLeft, ParseDirection.ParseFromRight):
-			query = QueryBuilder.Process(input, dir)
-			before = GetTicks()
-			result = processor.ProcessQuery(query)
-			dt = GetTicks() - before
-			print "${dir}: ${dt}ms "
-		
-		for doc in result:
-			System.Console.Write(doc.Title + " ")
-			# We can now actually retrieve the content
-			#print doc.ReadContent()
-			#print "---"
-		print ""
-		print "Displayed ${result.Count} results"
+		try:
+			for dir in (ParseDirection.ParseFromLeft, ParseDirection.ParseFromRight):
+				query = QueryBuilder.Process(input, dir)
+				before = GetTicks()
+				result = processor.ProcessQuery(query)
+				dt = GetTicks() - before
+				print "${dir}: ${dt}ms "
+			
+			for doc in result:
+				System.Console.Write(doc.Title + " ")
+				# We can now actually retrieve the content
+				#print doc.ReadContent()
+				#print "---"
+			print ""
+			print "Displayed ${result.Count} results"
+		except e:
+			print "***ERROR***", e
 	print ""
 System.Console.ReadKey()
