@@ -46,6 +46,23 @@ class SetUtils[of T(IComparable)]:
 		
 		return result
 		
+	static public def Minus(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
+		result = List[of T]()
+		ls = SimpleEnumerator[of T](left.GetEnumerator())
+		ls.MoveNext()
+		rs = SimpleEnumerator[of T](right.GetEnumerator())
+		rs.MoveNext()
+		while not ls.After:
+			if rs.After or ls.Current.CompareTo(rs.Current) < 0:
+				result.Add(ls.Current)
+				ls.MoveNext()
+			elif not ls.After and not rs.After and ls.Current == rs.Current:
+				ls.MoveNext()
+				rs.MoveNext()
+			else:
+				rs.MoveNext()
+		return result
+				
 protected final class SimpleEnumerator[of T]:
 """This class helps you to keep track of a IEnumerator"""
 	protected Enumerable as IEnumerator[of T]

@@ -112,10 +112,7 @@ class QueryProcessor(IQueryVisitor):
 	public def VisitNotQuery(notQuery as NotQuery) as void:
 		left = Accept(notQuery.Left)
 		right = Accept(notQuery.Right)
-		result = List[of Document]()
-		for t in left:
-			result.Add(t) if not right.Contains(t)
-		Push(result)
+		Push(SetUtils[of Document].Minus(left, right))
 		
 	public def VisitTermQuery(termQuery as TermQuery) as void:
 		Push(RetrievalSystem.RetrieveDocumentsForWord(termQuery.Term))
