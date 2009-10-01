@@ -29,13 +29,37 @@ class RetrievalSystem:
 	protected Documents = List[of Document]()
 	protected Index = Dictionary[of Term, List[of Document]]()
 	protected Terms = Dictionary[of string, Term]()
+	protected Words = Dictionary[of Term, string]()
+	protected Stopwords = array(Term, 0)
+	public DocumentProcessor as IDocumentProcessor
 	[Getter(NumTerms)] _NumTerms = 0
 	[Getter(NumDocuments)] _NumDocuments = 0
+	
+	public NullTerm:
+		get: return _NullTerm
+	private _NullTerm as Term
 
 	public event DocumentLoaded as EventHandler[of DocumentLoadedArgs]
-
+	
 	public def constructor():
-		pass
+		DocumentProcessor = DocumentProcessor(self)
+		
+		// Create a null term that never occurs in any document
+		_NullTerm = Term()
+		_NullTerm.ID = NumTerms
+		_NumTerms += 1		
+		
+	public def LoadStopwords(path as string):
+		stopwords = File.ReadAllLines(path)
+		Stopwords = array(Term, stopwords.Length)
+		for i in range(stopwords.Length):
+			Stopwords[i] = GetTerm(stopwords[i].ToUpper().Trim())
+		Array.Sort[of Term](Stopwords)
+		
+	public def IsStopword(term as Term):
+		word = Words[term]
+		i = Array.BinarySearch[of Term](Stopwords, term)
+		return i >= 0 and i < Stopwords.Length
 		
 	public def CreateIndex(directory as string):
 		# Read all files
@@ -45,7 +69,7 @@ class RetrievalSystem:
 		for f in files:
 			path = IO.Path.Combine(directory, f.Name)
 			doc = Document(self, path)
-			terms = doc.Process()
+			terms = doc.Process(DocumentProcessor)
 			for term in terms:
 				if not Index.ContainsKey(term):
 					Index.Add(term, List[of Document]())
@@ -61,7 +85,6 @@ class RetrievalSystem:
 		return QueryProcessor(self)
 
 	public def RetrieveDocumentsForWord(word as string) as List[of Document]:
-		word = word.Trim().ToUpper()
 		term = GetTerm(word)
 		return RetrieveDocumentsForTerm(term)
 		
@@ -76,11 +99,14 @@ class RetrievalSystem:
 		return RetrieveDocumentsForTerm(term)
 
 	public def GetTerm(word as string) as Term:
+		return NullTerm if word == null
+		word = word.Trim().ToUpper()
 		if not Terms.ContainsKey(word):
 			term = Term()
 			term.ID = NumTerms
 			_NumTerms += 1
 			Terms.Add(word, term)
+			Words.Add(term, word)
 		return Terms[word]
 
 class QueryProcessor(IQueryVisitor):
@@ -139,7 +165,6 @@ class Document(IComparable[of Document], IComparable):
 	"""The path where this document is located"""
 	
 	static protected NumDocuments = 0
-	static protected SplitRule = regex("[^a-zA-Z0-9]")
 	
 	public def constructor(retrievalSystem as RetrievalSystem, path as string):
 		Path = path
@@ -149,20 +174,9 @@ class Document(IComparable[of Document], IComparable):
 		NumDocuments += 1
 		_Id = NumDocuments
 	
-	public def Process() as List[of Term]:
+	public def Process(processor as IDocumentProcessor) as List[of Term]:
 	"""Process the document to extract all terms in it"""
-		lines = File.ReadAllLines(Path)
-		terms = List[of Term]()
-		for line in lines:
-			words = SplitRule.Split(line)
-			for word in words:
-				word = word.ToUpper().Trim()
-				continue if word.Length == 0
-				term = RetrievalSystem.GetTerm(word)
-				i = terms.BinarySearch(term)
-				if i < 0:
-					terms.Insert(~i, term)						
-		return terms
+		return processor.Process(Path)
 			
 	public def ReadContent() as string:
 		return File.ReadAllText(Path)

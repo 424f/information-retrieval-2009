@@ -52,6 +52,10 @@ class TestSetUtils:
 	[Test]
 	public def TestIntersection5():
 		TestIntersection((1, 2, 3), (of int:,), (of int:,))
+
+	[Test]
+	public def TestIntersection6():
+		TestIntersection((3, 4, 5), (1, 2, 3), (3, ))
 		
 	public def TestIntersection(A as IEnumerable[of int], B as IEnumerable[of int], expected as IEnumerable[of int]):
 		C = SetUtils[of Int32].Intersect(A, B)
@@ -78,6 +82,10 @@ class TestSetUtils:
 	[Test]
 	public def TestMinus5():
 		TestMinus((1, 2, 3), (of int:,), (1, 2, 3))
+
+	[Test]
+	public def TestMinus6():
+		TestMinus((3, 4, 5), (1, 2, 3), (4, 5))
 		
 	public def TestMinus(A as IEnumerable[of int], B as IEnumerable[of int], expected as IEnumerable[of int]):
 		C = SetUtils[of Int32].Minus(A, B)

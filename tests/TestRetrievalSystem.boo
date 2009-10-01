@@ -61,10 +61,13 @@ class TestRetrievalSystem():
 	public def TestQ68():
 		RunTest("INDIAN and COMMUNIST and CHINESE", ("doc155", "doc156", "doc307", "doc68", "doc92", ))
 
+	[Test]
+	public def TestQ0():
+		RunTest("is and are and the and a and then and before and after and but and an and also and since and among and already", ("doc121", "doc156", "doc47"))		
 	
 	public def RunTest(query as string, expected as (string)):
 		qp = RetrievalSystem.CreateQueryProcessor()
-		q as Query = QueryBuilder.Process(query, ParseDirection.ParseFromLeft)
+		q as Query = QueryBuilder.Process(RetrievalSystem, query, ParseDirection.ParseFromLeft)
 		print q
 		result = qp.ProcessQuery(q)
 		

@@ -67,8 +67,8 @@ while input != "quit":
 	else:
 		result as List[of Document]
 		try:
-			for dir in (ParseDirection.ParseFromLeft, ParseDirection.ParseFromRight):
-				query = QueryBuilder.Process(input, dir)
+			for dir in (ParseDirection.ParseFromRight, ParseDirection.ParseFromLeft):
+				query = QueryBuilder.Process(rs, input, dir)
 				before = GetTicks()
 				result = processor.ProcessQuery(query)
 				dt = GetTicks() - before
@@ -84,4 +84,3 @@ while input != "quit":
 		except e:
 			print "***ERROR***", e
 	print ""
-System.Console.ReadKey()

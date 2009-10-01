@@ -3,7 +3,7 @@ namespace IR
 import System
 import System.Collections.Generic
 
-class SetUtils[of T(IComparable)]:
+static class SetUtils[of T(IComparable)]:
 """Provides methods that operate on sets that are represented by _sorted_ IEnumerables"""	
 	static public def Intersect(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
 		result = List[of T]()

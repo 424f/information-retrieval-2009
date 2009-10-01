@@ -56,12 +56,15 @@
   <ItemGroup>
     <Folder Include="tests" />
     <Folder Include="src" />
+    <Compile Include="src\DocumentProcessor.boo" />
     <Compile Include="src\Program.boo" />
     <Compile Include="src\Query.boo" />
+    <Compile Include="src\QueryProcessor.boo" />
     <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\SetUtils.boo" />
     <Compile Include="tests\TestRetrievalSystem.boo" />
     <Compile Include="tests\TestSetUtils.boo" />
+    <Compile Include="tests\TestStopwordEleminator.boo" />
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>
