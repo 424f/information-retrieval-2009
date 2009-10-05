@@ -3,7 +3,7 @@ namespace IR
 import System
 import System.Collections.Generic
 
-class QueryStopwordEleminator(IQueryVisitor):
+class QueryProcessor(IQueryVisitor):
 	protected RetrievalSystem as RetrievalSystem
 	private Stack = List[of List[of Document]]()
 	
@@ -44,3 +44,4 @@ class QueryStopwordEleminator(IQueryVisitor):
 		item = Stack[Stack.Count-1]
 		Stack.RemoveAt(Stack.Count-1)
 		return item
+

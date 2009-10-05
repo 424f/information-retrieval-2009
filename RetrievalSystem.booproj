@@ -56,6 +56,7 @@
   <ItemGroup>
     <Folder Include="tests" />
     <Folder Include="src" />
+    <Compile Include="src\Document.boo" />
     <Compile Include="src\DocumentProcessor.boo" />
     <Compile Include="src\Program.boo" />
     <Compile Include="src\Query.boo" />
@@ -65,6 +66,10 @@
     <Compile Include="tests\TestRetrievalSystem.boo" />
     <Compile Include="tests\TestSetUtils.boo" />
     <Compile Include="tests\TestStopwordEleminator.boo" />
+    <ProjectReference Include="..\PorterStemmer\PorterStemmer.csproj">
+      <Project>{7866BE50-9D37-415F-844D-B734E5DE0EF6}</Project>
+      <Name>PorterStemmer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

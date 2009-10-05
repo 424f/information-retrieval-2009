@@ -34,6 +34,7 @@ class RetrievalSystem:
 	public DocumentProcessor as IDocumentProcessor
 	[Getter(NumTerms)] _NumTerms = 0
 	[Getter(NumDocuments)] _NumDocuments = 0
+	protected PorterStemmer = PorterStemmerAlgorithm.PorterStemmer()
 	
 	public NullTerm:
 		get: return _NullTerm
@@ -100,7 +101,6 @@ class RetrievalSystem:
 
 	public def GetTerm(word as string) as Term:
 		return NullTerm if word == null
-		word = word.Trim().ToUpper()
 		if not Terms.ContainsKey(word):
 			term = Term()
 			term.ID = NumTerms
@@ -108,85 +108,3 @@ class RetrievalSystem:
 			Terms.Add(word, term)
 			Words.Add(term, word)
 		return Terms[word]
-
-class QueryProcessor(IQueryVisitor):
-	protected RetrievalSystem as RetrievalSystem
-	private Stack = List[of List[of Document]]()
-	
-	public def constructor(retrievalSystem as RetrievalSystem):
-		RetrievalSystem = retrievalSystem
-
-	public def Accept(query as Query) as List[of Document]:
-		query.Visit(self)
-		return Pop()
-
-	public def ProcessQuery(query as Query) as List[of Document]:
-		query.Visit(self)
-		result = Pop()
-		return result
-
-	public def VisitAndQuery(andQuery as AndQuery) as void:
-		left = Accept(andQuery.Left)
-		right = Accept(andQuery.Right)
-		Push(SetUtils[of Document].Intersect(left, right))
-		
-	public def VisitOrQuery(orQuery as OrQuery) as void:
-		left = Accept(orQuery.Left)
-		right = Accept(orQuery.Right)
-		Push(SetUtils[of Document].Union(left, right))
-		
-	public def VisitNotQuery(notQuery as NotQuery) as void:
-		left = Accept(notQuery.Left)
-		right = Accept(notQuery.Right)
-		Push(SetUtils[of Document].Minus(left, right))
-		
-	public def VisitTermQuery(termQuery as TermQuery) as void:
-		Push(RetrievalSystem.RetrieveDocumentsForWord(termQuery.Term))
-	
-	protected def Push(terms as List[of Document]) as void:
-		Stack.Add(terms)
-		
-	protected def Pop() as List[of Document]:
-		item = Stack[Stack.Count-1]
-		Stack.RemoveAt(Stack.Count-1)
-		return item
-
-class Document(IComparable[of Document], IComparable):
-	[Getter(RetrievalSystem)] _RetrievalSystem as RetrievalSystem
-	"""The retrieval system to which this document belongs"""
-	
-	[Getter(Id)] _Id as int
-	"""Unique identifier for this instance"""
-	
-	[Property(Title)] _Title as string
-	"""This document's title"""
-	
-	[Property(Path)] _Path as string
-	"""The path where this document is located"""
-	
-	static protected NumDocuments = 0
-	
-	public def constructor(retrievalSystem as RetrievalSystem, path as string):
-		Path = path
-		Title = IO.Path.GetFileName(path)
-		_RetrievalSystem = retrievalSystem
-		
-		NumDocuments += 1
-		_Id = NumDocuments
-	
-	public def Process(processor as IDocumentProcessor) as List[of Term]:
-	"""Process the document to extract all terms in it"""
-		return processor.Process(Path)
-			
-	public def ReadContent() as string:
-		return File.ReadAllText(Path)
-
-	public def CompareTo(other as Document) as int:
-		return self.Title.CompareTo(other.Title)
-
-	public def CompareTo(other as object) as int:
-		return CompareTo(other as Document)
-
-	public static def op_LessThan(d1 as Document, d2 as Document):
-		return d1.CompareTo(d2) < 0
- 
