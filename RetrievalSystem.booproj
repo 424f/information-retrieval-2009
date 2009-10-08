@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Exe</OutputType>
-    <RootNamespace>RetrievalSystem</RootNamespace>
+    <RootNamespace>IR</RootNamespace>
     <AssemblyName>RetrievalSystem</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <Strict>False</Strict>
@@ -63,8 +63,10 @@
     <Compile Include="src\QueryProcessor.boo" />
     <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\SetUtils.boo" />
+    <Compile Include="src\TermRepository.boo" />
     <Compile Include="tests\TestRetrievalSystem.boo" />
     <Compile Include="tests\TestSetUtils.boo" />
+    <Compile Include="tests\TestStemming.boo" />
     <Compile Include="tests\TestStopwordEleminator.boo" />
     <ProjectReference Include="..\PorterStemmer\PorterStemmer.csproj">
       <Project>{7866BE50-9D37-415F-844D-B734E5DE0EF6}</Project>

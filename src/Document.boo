@@ -23,7 +23,6 @@ class Document(IComparable[of Document], IComparable):
 		Path = path
 		Title = IO.Path.GetFileName(path)
 		_RetrievalSystem = retrievalSystem
-		
 		NumDocuments += 1
 		_Id = NumDocuments
 	

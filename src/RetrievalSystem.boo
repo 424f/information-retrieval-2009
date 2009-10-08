@@ -35,6 +35,7 @@ class RetrievalSystem:
 	[Getter(NumTerms)] _NumTerms = 0
 	[Getter(NumDocuments)] _NumDocuments = 0
 	protected PorterStemmer = PorterStemmerAlgorithm.PorterStemmer()
+	[Property(EnableStemming)] _EnableStemming = false
 	
 	public NullTerm:
 		get: return _NullTerm
@@ -101,6 +102,9 @@ class RetrievalSystem:
 
 	public def GetTerm(word as string) as Term:
 		return NullTerm if word == null
+		word = word.ToLower().Trim()
+		if EnableStemming:
+			word = PorterStemmer.stemTerm(word)
 		if not Terms.ContainsKey(word):
 			term = Term()
 			term.ID = NumTerms

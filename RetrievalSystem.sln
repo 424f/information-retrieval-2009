@@ -6,6 +6,8 @@ Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "RetrievalSystem", "Retrieva
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PorterStemmer", "..\PorterStemmer\PorterStemmer.csproj", "{7866BE50-9D37-415F-844D-B734E5DE0EF6}"
 EndProject
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "GUIClient", "GUIClient\GUIClient.booproj", "{2BD96A2A-E07B-4834-867E-7E263C7A7D16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,5 +22,9 @@ Global
 		{7866BE50-9D37-415F-844D-B734E5DE0EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7866BE50-9D37-415F-844D-B734E5DE0EF6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7866BE50-9D37-415F-844D-B734E5DE0EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal

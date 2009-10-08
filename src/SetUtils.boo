@@ -64,7 +64,7 @@ static class SetUtils[of T(IComparable)]:
 		return result
 				
 protected final class SimpleEnumerator[of T]:
-"""This class helps you to keep track of a IEnumerator"""
+"""This class helps you to keep track of an IEnumerator's state"""
 	protected Enumerable as IEnumerator[of T]
 	
 	public After as bool:
