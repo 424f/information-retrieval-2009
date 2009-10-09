@@ -6,6 +6,8 @@ Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "RetrievalSystem", "Retrieva
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "GUIClient", "GUIClient\GUIClient.booproj", "{2BD96A2A-E07B-4834-867E-7E263C7A7D16}"
 EndProject
+Project("{00000000-0000-0000-0000-000000000000}") = "RetrievalSystem", "RetrievalSystem.sln", "5A1CA89B-DE86-4DA3-ABD9-4F4EF1F29962"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,5 +22,9 @@ Global
 		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		5A1CA89B-DE86-4DA3-ABD9-4F4EF1F29962.Debug|Any CPU.Build.0 = Debug|Any CPU
+		5A1CA89B-DE86-4DA3-ABD9-4F4EF1F29962.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		5A1CA89B-DE86-4DA3-ABD9-4F4EF1F29962.Release|Any CPU.Build.0 = Release|Any CPU
+		5A1CA89B-DE86-4DA3-ABD9-4F4EF1F29962.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal

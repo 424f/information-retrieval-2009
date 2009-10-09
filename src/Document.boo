@@ -16,6 +16,11 @@ class Document(IComparable[of Document], IComparable):
 	
 	[Property(Path)] _Path as string
 	"""The path where this document is located"""
+
+	Words as int:
+	"""Number of Words in this document (used for Heaps Law)"""
+		get:
+			return ReadContent().Split(char.Parse(' ')).Length
 	
 	static protected NumDocuments = 0
 	
