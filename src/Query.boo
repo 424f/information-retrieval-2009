@@ -74,7 +74,6 @@ enum ParseDirection:
 
 class QueryBuilder():
 	static public def Process(rs as RetrievalSystem, query as string, direction as ParseDirection):
-		terms = List[of string]()
 		items = List[of string](query.Split((Char.Parse(' '),), StringSplitOptions.RemoveEmptyEntries))
 		
 		# Remove all stopwords

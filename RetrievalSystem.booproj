@@ -39,6 +39,9 @@
     <Reference Include="nunit.framework">
       <HintPath>C:\Program Files\NUnit 2.4.8\bin\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="PorterStemmer">
+      <HintPath>libs\PorterStemmer.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -64,14 +67,11 @@
     <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\SetUtils.boo" />
     <Compile Include="src\TermRepository.boo" />
+    <Compile Include="tests\TestPhraseQueries.boo" />
     <Compile Include="tests\TestRetrievalSystem.boo" />
     <Compile Include="tests\TestSetUtils.boo" />
     <Compile Include="tests\TestStemming.boo" />
     <Compile Include="tests\TestStopwordEleminator.boo" />
-    <ProjectReference Include="..\PorterStemmer\PorterStemmer.csproj">
-      <Project>{7866BE50-9D37-415F-844D-B734E5DE0EF6}</Project>
-      <Name>PorterStemmer</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(BooBinPath)\Boo.Microsoft.Build.targets" />
 </Project>

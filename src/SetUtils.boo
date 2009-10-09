@@ -5,7 +5,7 @@ import System.Collections.Generic
 
 static class SetUtils[of T(IComparable)]:
 """Provides methods that operate on sets that are represented by _sorted_ IEnumerables"""	
-	static public def Intersect(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
+	public def Intersect(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
 		result = List[of T]()
 		ls = SimpleEnumerator[of T](left.GetEnumerator())
 		ls.MoveNext()
@@ -22,7 +22,7 @@ static class SetUtils[of T(IComparable)]:
 				rs.MoveNext()
 		return result
 		
-	static public def Union(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
+	public def Union(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
 		result = List[of T]()
 		ls = SimpleEnumerator[of T](left.GetEnumerator())
 		l as T = ls.GetNext()
@@ -46,7 +46,7 @@ static class SetUtils[of T(IComparable)]:
 		
 		return result
 		
-	static public def Minus(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
+	public def Minus(left as IEnumerable[of T], right as IEnumerable[of T]) as List[of T]:
 		result = List[of T]()
 		ls = SimpleEnumerator[of T](left.GetEnumerator())
 		ls.MoveNext()
@@ -65,16 +65,16 @@ static class SetUtils[of T(IComparable)]:
 				
 protected final class SimpleEnumerator[of T]:
 """This class helps you to keep track of an IEnumerator's state"""
-	protected Enumerable as IEnumerator[of T]
+	private Enumerable as IEnumerator[of T]
 	
 	public After as bool:
 		get: return _After
-	protected _After as bool
+	private _After as bool
 	
 	public Current as T:
 		get: 
 			return _Current
-	protected _Current as T
+	private _Current as T
 	
 	public def constructor(e as IEnumerator[of T]):
 		Enumerable = e

@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-# SharpDevelop 3.1.0.4077
+# SharpDevelop 3.1.0.4977
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "RetrievalSystem", "RetrievalSystem.booproj", "{107A70A8-5FCB-4599-BEC3-55209844C08A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PorterStemmer", "..\PorterStemmer\PorterStemmer.csproj", "{7866BE50-9D37-415F-844D-B734E5DE0EF6}"
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "GUIClient", "GUIClient\GUIClient.booproj", "{2BD96A2A-E07B-4834-867E-7E263C7A7D16}"
 EndProject
@@ -18,10 +16,6 @@ Global
 		{107A70A8-5FCB-4599-BEC3-55209844C08A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{107A70A8-5FCB-4599-BEC3-55209844C08A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{107A70A8-5FCB-4599-BEC3-55209844C08A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7866BE50-9D37-415F-844D-B734E5DE0EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7866BE50-9D37-415F-844D-B734E5DE0EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7866BE50-9D37-415F-844D-B734E5DE0EF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7866BE50-9D37-415F-844D-B734E5DE0EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2BD96A2A-E07B-4834-867E-7E263C7A7D16}.Release|Any CPU.Build.0 = Release|Any CPU
