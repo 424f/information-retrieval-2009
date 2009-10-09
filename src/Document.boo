@@ -2,7 +2,6 @@ namespace IR
 
 import System
 import System.IO
-import System.Collections.Generic
 
 class Document(IComparable[of Document], IComparable):
 	[Getter(RetrievalSystem)] _RetrievalSystem as RetrievalSystem
@@ -17,6 +16,12 @@ class Document(IComparable[of Document], IComparable):
 	[Property(Path)] _Path as string
 	"""The path where this document is located"""
 	
+	[Property(NumTerms)] _NumTerms as int
+	"""Overall number of terms that are part of this document (is set by DocumentProcessor)"""
+	
+	[Property(NumUniqueTerms)] _NumUniqueTerms as int
+	"""Number of unique terms that are part of this document (is set by DocumentProcessor)"""
+	
 	static protected NumDocuments = 0
 	
 	public def constructor(retrievalSystem as RetrievalSystem, path as string):
@@ -25,10 +30,6 @@ class Document(IComparable[of Document], IComparable):
 		_RetrievalSystem = retrievalSystem
 		NumDocuments += 1
 		_Id = NumDocuments
-	
-	public def Process(processor as IDocumentProcessor) as List[of Term]:
-	"""Process the document to extract all terms in it"""
-		return processor.Process(Path)
 			
 	public def ReadContent() as string:
 		return File.ReadAllText(Path)

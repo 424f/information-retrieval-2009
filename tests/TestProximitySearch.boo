@@ -5,7 +5,7 @@ import NUnit.Framework
 import IR
 
 [TestFixture]
-class TestPhraseQueries:
+class TestProximitySearch:
 	protected RetrievalSystem as RetrievalSystem
 	
 	[TestFixtureSetUp] 

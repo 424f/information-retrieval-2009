@@ -63,11 +63,13 @@
     <Compile Include="src\DocumentProcessor.boo" />
     <Compile Include="src\Program.boo" />
     <Compile Include="src\Query.boo" />
+    <Compile Include="src\QueryBuilder.boo" />
     <Compile Include="src\QueryProcessor.boo" />
     <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\SetUtils.boo" />
     <Compile Include="src\TermRepository.boo" />
     <Compile Include="tests\TestPhraseQueries.boo" />
+    <Compile Include="tests\TestProximitySearch.boo" />
     <Compile Include="tests\TestRetrievalSystem.boo" />
     <Compile Include="tests\TestSetUtils.boo" />
     <Compile Include="tests\TestStemming.boo" />
