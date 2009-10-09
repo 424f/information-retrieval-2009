@@ -40,7 +40,11 @@ class DocumentLoadedArgs(EventArgs):
 
 class TermOccurences(IComparable):
 	[Property(Document)] _Document as Document
-	[Property(Positions)] _Positions = List[of int]()
+	[Property(Occurences)] _Occurences as IEnumerable[of int]
+	
+	public def constructor(document as Document, occurences as IEnumerable[of int]):
+		_Document = document
+		_Occurences = occurences
 	
 	public def CompareTo(other as object):
 		Document.CompareTo(other)
@@ -83,8 +87,17 @@ class RetrievalSystem:
 	public def IsStopword(term as Term):
 		i = Array.BinarySearch[of Term](Stopwords, term)
 		return i >= 0 and i < Stopwords.Length
+
+	protected def OnProcessedTerm(sender as object, e as ProcessedTermEventArgs):
+		term = e.Term
+		if not Index.ContainsKey(term):
+			Index.Add(term, List[of Document]())
+			PositionalIndex[term] = List[of TermOccurences]()
+		PositionalIndex[term].Add(TermOccurences(e.Document, e.Occurences))
+		Index[term].Add(e.Document)
 		
 	public def CreateIndex(directory as string):
+		DocumentProcessor.ProcessedTerm += OnProcessedTerm
 		# Read all files
 		dirInfo = DirectoryInfo(directory)
 		files = dirInfo.GetFiles()
@@ -92,18 +105,13 @@ class RetrievalSystem:
 		for f in files:
 			path = IO.Path.Combine(directory, f.Name)
 			doc = Document(self, path)
-			terms = doc.Process(DocumentProcessor)
-			for term in terms:
-				if not Index.ContainsKey(term):
-					Index.Add(term, List[of Document]())
-					PositionalIndex[term] = List[of TermOccurences]()
-				Index[term].Add(doc)
-			
+			DocumentProcessor.Process(doc)
 			Documents.Add(doc)			
-			DocumentLoaded(self, DocumentLoadedArgs(doc, terms.Count))
+		DocumentLoaded(self, DocumentLoadedArgs(doc, 0))
 		# Sort indices
 		for term in Index.Keys:
 			Index[term].Sort()
+		DocumentProcessor.ProcessedTerm -= OnProcessedTerm
 
 	public def CreateQueryProcessor() as QueryProcessor:
 		return QueryProcessor(self)
@@ -121,6 +129,9 @@ class RetrievalSystem:
 		term = Term()
 		term.ID = termId
 		return RetrieveDocumentsForTerm(term)
+		
+	public def RetrievePositionsForTermInDocument(term as Term, doc as Document) as List[of int]:
+		return PositionalIndex[term].Find({ to as TermOccurences | to.Document == doc }).Occurences
 
 	public def GetTerm(word as string) as Term:
 		return NullTerm if word == null
