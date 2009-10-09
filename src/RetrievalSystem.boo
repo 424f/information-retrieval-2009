@@ -156,4 +156,16 @@ class RetrievalSystem:
 		oneWords.Sort(WordLengthComparer())
 		
 		return oneWords
+	
+	public def HeapLawK() as int:
+		beta = 0.5
+		V = Terms.Count
+		totalWordCount = 0
+		for document as Document in Documents:
+			totalWordCount += document.NumTerms
+		
+		return (V/(totalWordCount**beta))
+		
+		
+			
 		
