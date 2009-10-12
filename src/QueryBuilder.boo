@@ -15,7 +15,16 @@ class QueryBuilder:
 			usedWords.Add(word)
 		return PhraseQuery(usedWords.ToArray())
 			
-			
+	static public def BuildProximityQuery(rs as RetrievalSystem, query as string, proximity as int):
+	"""Builds a query that is simply interpreted as a phrase query"""
+		splitRule = regex("[^a-zA-Z0-9]")
+		words = splitRule.Split(query)
+		usedWords = List[of string]()
+		for word in words:
+			word = word.Trim()
+			continue if word.Length == 0
+			usedWords.Add(word)
+		return ProximityQuery(usedWords.ToArray(), proximity)			
 	
 	static public def BuildQuery(rs as RetrievalSystem, query as string, direction as ParseDirection):
 	"""Query that consits of alternating keywords and operators"""

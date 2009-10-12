@@ -75,7 +75,7 @@ class RetrievalSystem:
 		i = Array.BinarySearch[of Term](Stopwords, term)
 		return i >= 0 and i < Stopwords.Length
 
-	protected def OnProcessedTerm(sender as object, e as ProcessedTermEventArgs):
+	def OnProcessedTerm(sender as object, e as ProcessedTermEventArgs) as void:
 		term = e.Term
 		if not Index.ContainsKey(term):
 			Index.Add(term, List[of Document]())
@@ -94,7 +94,7 @@ class RetrievalSystem:
 			doc = Document(self, path)
 			DocumentProcessor.Process(doc)
 			Documents.Add(doc)			
-		DocumentLoaded(self, DocumentLoadedArgs(doc, 0))
+			DocumentLoaded(self, DocumentLoadedArgs(doc, 0))
 		# Sort indices
 		for term in Index.Keys:
 			Index[term].Sort()

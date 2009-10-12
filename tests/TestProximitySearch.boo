@@ -12,26 +12,25 @@ class TestProximitySearch:
 	public def Init():
 		RetrievalSystem = RetrievalSystem()
 		RetrievalSystem.CreateIndex("../../data/TIME/Docs/")
-		//Phrase Search [ = Proximity search with window size = 2]
 	
 	[Test] public def TestQ1():
 		RunTest("THERE HAS BEEN", ("doc122", "doc253", "doc343"))
 
 	[Test] public def TestQ2():
-		RunTest("ONE OF THE BEST", ("doc186", ))
+		RunTest("ONE OF THE BEST", ("doc186", "doc294"))
 		
 	[Test] public def TestQ3():
-		RunTest("POLITICAL PARTY", ("doc159", "doc6"))
+		RunTest("POLITICAL PARTY", ("doc148", "doc159", "doc253", "doc377", "doc39", "doc6", "doc88"))
 
 	[Test] public def TestQ4():
-		RunTest("THE NEW REGIME", ("doc121", "doc370", "doc370", "doc70", "doc70"))
+		RunTest("THE NEW REGIME", ("doc115", "doc121", "doc370", "doc370", "doc70", "doc70"))
 
 	[Test] public def TestQ5():
-		RunTest("DELEGATES MEETING", (of string: ,))
+		RunTest("DELEGATES MEETING", ("doc156", "doc47"))
 		
 	public def RunTest(query as string, expected as (string)):
 		qp = RetrievalSystem.CreateQueryProcessor()
-		q as Query = QueryBuilder.BuildPhraseQuery(RetrievalSystem, query)
+		q as Query = QueryBuilder.BuildProximityQuery(RetrievalSystem, query, 10)
 		print q
 		result = qp.ProcessQuery(q)
 		

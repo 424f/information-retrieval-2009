@@ -79,6 +79,9 @@ protected final class SimpleEnumerator[of T]:
 	public def constructor(e as IEnumerator[of T]):
 		Enumerable = e
 		_After = false
+
+	public def constructor(e as IEnumerable[of T]):
+		self(e.GetEnumerator())
 		
 	public def MoveNext() as bool:
 		b = Enumerable.MoveNext()

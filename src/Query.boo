@@ -11,6 +11,7 @@ interface IQueryVisitor:
 	def VisitNotQuery(notQuery as NotQuery)
 	def VisitTermQuery(termQuery as TermQuery)
 	def VisitPhraseQuery(phraseQuery as PhraseQuery)
+	def VisitProximityQuery(proximityQuery as ProximityQuery)
 
 class TermQuery(Query):
 	[Property(Term)] _term as string
@@ -32,6 +33,20 @@ class PhraseQuery(Query):
 		
 	public override def Visit(visitor as IQueryVisitor):
 		visitor.VisitPhraseQuery(self)
+
+	public def ToString() as string:
+		return _Terms.ToString()
+
+class ProximityQuery(Query):
+	[Property(Terms)] _Terms as (string)
+	[Property(Proximity)] _Proximity as int
+	
+	public def constructor(terms as (string), proximity as int):
+		_Terms = terms
+		_Proximity = proximity
+		
+	public override def Visit(visitor as IQueryVisitor):
+		visitor.VisitProximityQuery(self)
 
 	public def ToString() as string:
 		return _Terms.ToString()
