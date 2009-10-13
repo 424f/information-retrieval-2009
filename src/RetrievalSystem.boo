@@ -3,32 +3,6 @@
 import System
 import System.IO
 import System.Collections.Generic
-
-private class WordLengthComparer(IComparer[of String]):		
-"""Sorts Strings by Length Descending"""
-
-	public def Compare(a as String, b as String) as int:
-		if a.Length > b.Length:
-			return -1
-		elif a.Length == b.Length:
-			return 0
-		else:
-			return 1
-			
-	
-
-struct Term(IComparable[of Term]):
-	public ID as int
-	
-	public def CompareTo(other as Term) as int:
-		return self.ID.CompareTo(other.ID)
-		
-	public override def Equals(other as object) as bool:
-		return false if not other isa Term
-		return self.ID == cast(Term, other).ID
-	
-	public override def GetHashCode() as int:
-		return ID.GetHashCode()
 	
 class DocumentLoadedArgs(EventArgs):
 	[Getter(Document)] _Document as Document
@@ -53,7 +27,7 @@ class RetrievalSystem:
 	protected Documents = List[of Document]()
 	protected Index = Dictionary[of Term, List[of Document]]()
 	protected PositionalIndex = Dictionary[of Term, List[of TermOccurences]]()
-	protected Terms = Dictionary[of string, Term]()
+	[Getter(Terms)] _Terms = Dictionary[of string, Term]()
 	protected Words = Dictionary[of Term, string]()
 	protected Stopwords = array(Term, 0)
 	public DocumentProcessor as IDocumentProcessor
@@ -146,18 +120,7 @@ class RetrievalSystem:
 			Words.Add(term, word)
 		return Terms[word]
 	
-	public def GetWordsWithOneOccurrence() as List[of String]:
-		oneWords = List[of String]()
-		for term as Term in Terms.Values:
-			if RetrieveDocumentsForTerm(term).Count == 1:
-				oneWords.Add(Words[term])
-		# sort them so largest words (which are likely to be invalid
-		# words) appear first in the list
-		oneWords.Sort(WordLengthComparer())
-		
-		return oneWords
-	
-	public def HeapLawK() as int:
+	public def ComputeHeapsLawK() as int:
 		beta = 0.5
 		V = Terms.Count
 		totalWordCount = 0

@@ -27,8 +27,24 @@ class QueryBuilder:
 		return ProximityQuery(usedWords.ToArray(), proximity)			
 	
 	static public def BuildQuery(rs as RetrievalSystem, query as string, direction as ParseDirection):
-	"""Query that consits of alternating keywords and operators"""
-		items = List[of string](query.Split((Char.Parse(' '),), StringSplitOptions.RemoveEmptyEntries))
+	"""Query that consits of alternating keywords and operators and might also include phrase queries in quotes"""
+		items = List[of string]()
+		item = ""
+		query += " " // Trailing space makes it easier to parse
+		inString = false
+		for c in query:
+			if c == char.Parse('"'):
+				if inString:
+					items.Add("\"${item}")
+					item = ""
+				else:
+					pass
+				inString = not inString
+			elif not inString and char.IsWhiteSpace(c) and item.Length > 0:
+				items.Add(item)
+				item = ""
+			else:
+				item += c
 		
 		# Remove all stopwords
 		i = 0
@@ -46,12 +62,16 @@ class QueryBuilder:
 			items.Reverse()
 		
 		# Match a term
-		left as Query = TermQuery(items[0])
+		left as Query = (TermQuery(items[0]) if not items[0].StartsWith("\"") else PhraseQuery(items[0].Substring(1)))
 		i = 1
 		while i + 1 < items.Count:
 			op = items[i]
 			term = items[i+1]
-			right = TermQuery(term)
+			right as Query
+			if term.StartsWith("\""): // Phrase query
+				right = PhraseQuery(term.Substring(1))
+			else:
+				right = TermQuery(term)
 			if op == "not":
 				left = NotQuery(left, right)
 			elif op == "and":

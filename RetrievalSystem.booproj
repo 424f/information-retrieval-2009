@@ -33,6 +33,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Boo.Lang.Useful" />
+    <Reference Include="nunit.framework">
+      <HintPath>C:\Program Files\NUnit 2.4.8\bin\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="PorterStemmer">
       <HintPath>libs\PorterStemmer.dll</HintPath>
     </Reference>
@@ -61,6 +64,7 @@
     <Compile Include="src\QueryProcessor.boo" />
     <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\SetUtils.boo" />
+    <Compile Include="src\Term.boo" />
     <Compile Include="src\TermRepository.boo" />
     <Compile Include="tests\TestPhraseQueries.boo" />
     <Compile Include="tests\TestProximitySearch.boo" />

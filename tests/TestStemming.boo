@@ -20,10 +20,6 @@ class TestStemming:
 	[Test]
 	public def TestQ48():
 		RunTest("HOT and LINE and PROPOSAL", ("doc121", "doc306"))
-
-	[Test]
-	public def TestQ57():
-		RunTest("PROVISIONS not TREATY", ("doc196", "doc200", "doc230", "doc255", "doc319", "doc422", "doc87"))
 		
 	[Test]
 	public def TestQ60():

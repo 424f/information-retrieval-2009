@@ -13,33 +13,41 @@ partial class MainForm(System.Windows.Forms.Form):
 	// Do not change the method contents inside the source code editor. The Forms designer might
 	// not be able to load this method if it was changed manually.
 	private def InitializeComponent():
-		self.tabControl1 = System.Windows.Forms.TabControl()
+		self.MainTabControl = System.Windows.Forms.TabControl()
 		self.SettingsTab = System.Windows.Forms.TabPage()
-		self.checkBox1 = System.Windows.Forms.CheckBox()
-		self.button1 = System.Windows.Forms.Button()
+		self.BuildProgress = System.Windows.Forms.ProgressBar()
+		self.EnableStopwordElimination = System.Windows.Forms.CheckBox()
+		self.EnablePorterStemming = System.Windows.Forms.CheckBox()
+		self.BuildIndexButton = System.Windows.Forms.Button()
 		self.QueryTab = System.Windows.Forms.TabPage()
-		self.checkBox2 = System.Windows.Forms.CheckBox()
-		self.progressBar1 = System.Windows.Forms.ProgressBar()
-		self.tabControl1.SuspendLayout()
+		self.SearchResultsText = System.Windows.Forms.TextBox()
+		self.SearchButton = System.Windows.Forms.Button()
+		self.SearchText = System.Windows.Forms.TextBox()
+		self.StatsTab = System.Windows.Forms.TabPage()
+		self.StatsText = System.Windows.Forms.TextBox()
+		self.MainTabControl.SuspendLayout()
 		self.SettingsTab.SuspendLayout()
+		self.QueryTab.SuspendLayout()
+		self.StatsTab.SuspendLayout()
 		self.SuspendLayout()
 		# 
-		# tabControl1
+		# MainTabControl
 		# 
-		self.tabControl1.Controls.Add(self.SettingsTab)
-		self.tabControl1.Controls.Add(self.QueryTab)
-		self.tabControl1.Location = System.Drawing.Point(3, 3)
-		self.tabControl1.Name = "tabControl1"
-		self.tabControl1.SelectedIndex = 0
-		self.tabControl1.Size = System.Drawing.Size(569, 463)
-		self.tabControl1.TabIndex = 0
+		self.MainTabControl.Controls.Add(self.SettingsTab)
+		self.MainTabControl.Controls.Add(self.QueryTab)
+		self.MainTabControl.Controls.Add(self.StatsTab)
+		self.MainTabControl.Location = System.Drawing.Point(3, 3)
+		self.MainTabControl.Name = "MainTabControl"
+		self.MainTabControl.SelectedIndex = 0
+		self.MainTabControl.Size = System.Drawing.Size(569, 463)
+		self.MainTabControl.TabIndex = 0
 		# 
 		# SettingsTab
 		# 
-		self.SettingsTab.Controls.Add(self.progressBar1)
-		self.SettingsTab.Controls.Add(self.checkBox2)
-		self.SettingsTab.Controls.Add(self.checkBox1)
-		self.SettingsTab.Controls.Add(self.button1)
+		self.SettingsTab.Controls.Add(self.BuildProgress)
+		self.SettingsTab.Controls.Add(self.EnableStopwordElimination)
+		self.SettingsTab.Controls.Add(self.EnablePorterStemming)
+		self.SettingsTab.Controls.Add(self.BuildIndexButton)
 		self.SettingsTab.Location = System.Drawing.Point(4, 22)
 		self.SettingsTab.Name = "SettingsTab"
 		self.SettingsTab.Padding = System.Windows.Forms.Padding(3)
@@ -48,26 +56,46 @@ partial class MainForm(System.Windows.Forms.Form):
 		self.SettingsTab.Text = "Settings"
 		self.SettingsTab.UseVisualStyleBackColor = true
 		# 
-		# checkBox1
+		# BuildProgress
 		# 
-		self.checkBox1.Location = System.Drawing.Point(7, 7)
-		self.checkBox1.Name = "checkBox1"
-		self.checkBox1.Size = System.Drawing.Size(202, 24)
-		self.checkBox1.TabIndex = 1
-		self.checkBox1.Text = "Enable Porter Stemming"
-		self.checkBox1.UseVisualStyleBackColor = true
+		self.BuildProgress.Location = System.Drawing.Point(7, 401)
+		self.BuildProgress.Name = "BuildProgress"
+		self.BuildProgress.Size = System.Drawing.Size(448, 30)
+		self.BuildProgress.TabIndex = 2
 		# 
-		# button1
+		# EnableStopwordElimination
 		# 
-		self.button1.Location = System.Drawing.Point(461, 401)
-		self.button1.Name = "button1"
-		self.button1.Size = System.Drawing.Size(94, 30)
-		self.button1.TabIndex = 0
-		self.button1.Text = "Build index"
-		self.button1.UseVisualStyleBackColor = true
+		self.EnableStopwordElimination.Location = System.Drawing.Point(7, 37)
+		self.EnableStopwordElimination.Name = "EnableStopwordElimination"
+		self.EnableStopwordElimination.Size = System.Drawing.Size(202, 24)
+		self.EnableStopwordElimination.TabIndex = 1
+		self.EnableStopwordElimination.Text = "Enable Stopword Elimination"
+		self.EnableStopwordElimination.UseVisualStyleBackColor = true
+		# 
+		# EnablePorterStemming
+		# 
+		self.EnablePorterStemming.Location = System.Drawing.Point(7, 7)
+		self.EnablePorterStemming.Name = "EnablePorterStemming"
+		self.EnablePorterStemming.Size = System.Drawing.Size(202, 24)
+		self.EnablePorterStemming.TabIndex = 1
+		self.EnablePorterStemming.Text = "Enable Porter Stemming"
+		self.EnablePorterStemming.UseVisualStyleBackColor = true
+		# 
+		# BuildIndexButton
+		# 
+		self.BuildIndexButton.Location = System.Drawing.Point(461, 401)
+		self.BuildIndexButton.Name = "BuildIndexButton"
+		self.BuildIndexButton.Size = System.Drawing.Size(94, 30)
+		self.BuildIndexButton.TabIndex = 0
+		self.BuildIndexButton.Text = "Build index"
+		self.BuildIndexButton.UseVisualStyleBackColor = true
+		self.BuildIndexButton.Click += self.BuildIndexButtonClick as System.EventHandler
 		# 
 		# QueryTab
 		# 
+		self.QueryTab.Controls.Add(self.SearchResultsText)
+		self.QueryTab.Controls.Add(self.SearchButton)
+		self.QueryTab.Controls.Add(self.SearchText)
 		self.QueryTab.Location = System.Drawing.Point(4, 22)
 		self.QueryTab.Name = "QueryTab"
 		self.QueryTab.Padding = System.Windows.Forms.Padding(3)
@@ -76,39 +104,83 @@ partial class MainForm(System.Windows.Forms.Form):
 		self.QueryTab.Text = "Query"
 		self.QueryTab.UseVisualStyleBackColor = true
 		# 
-		# checkBox2
+		# SearchResultsText
 		# 
-		self.checkBox2.Location = System.Drawing.Point(7, 37)
-		self.checkBox2.Name = "checkBox2"
-		self.checkBox2.Size = System.Drawing.Size(202, 24)
-		self.checkBox2.TabIndex = 1
-		self.checkBox2.Text = "Enable Stopword Elimination"
-		self.checkBox2.UseVisualStyleBackColor = true
+		self.SearchResultsText.Location = System.Drawing.Point(7, 36)
+		self.SearchResultsText.Multiline = true
+		self.SearchResultsText.Name = "SearchResultsText"
+		self.SearchResultsText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+		self.SearchResultsText.Size = System.Drawing.Size(548, 395)
+		self.SearchResultsText.TabIndex = 2
 		# 
-		# progressBar1
+		# SearchButton
 		# 
-		self.progressBar1.Location = System.Drawing.Point(7, 401)
-		self.progressBar1.Name = "progressBar1"
-		self.progressBar1.Size = System.Drawing.Size(448, 30)
-		self.progressBar1.TabIndex = 2
+		self.SearchButton.Location = System.Drawing.Point(461, 5)
+		self.SearchButton.Name = "SearchButton"
+		self.SearchButton.Size = System.Drawing.Size(94, 23)
+		self.SearchButton.TabIndex = 1
+		self.SearchButton.Text = "Search"
+		self.SearchButton.UseVisualStyleBackColor = true
+		self.SearchButton.Click += self.SearchButtonClick as System.EventHandler
+		# 
+		# SearchText
+		# 
+		self.SearchText.Location = System.Drawing.Point(7, 7)
+		self.SearchText.Name = "SearchText"
+		self.SearchText.Size = System.Drawing.Size(447, 22)
+		self.SearchText.TabIndex = 0
+		self.SearchText.KeyDown += self.SearchTextKeyDown as System.Windows.Forms.KeyEventHandler
+		# 
+		# StatsTab
+		# 
+		self.StatsTab.Controls.Add(self.StatsText)
+		self.StatsTab.Location = System.Drawing.Point(4, 22)
+		self.StatsTab.Name = "StatsTab"
+		self.StatsTab.Padding = System.Windows.Forms.Padding(3)
+		self.StatsTab.Size = System.Drawing.Size(561, 437)
+		self.StatsTab.TabIndex = 2
+		self.StatsTab.Text = "Stats"
+		self.StatsTab.UseVisualStyleBackColor = true
+		# 
+		# StatsText
+		# 
+		self.StatsText.Location = System.Drawing.Point(7, 7)
+		self.StatsText.Multiline = true
+		self.StatsText.Name = "StatsText"
+		self.StatsText.Size = System.Drawing.Size(548, 424)
+		self.StatsText.TabIndex = 0
 		# 
 		# MainForm
 		# 
 		self.AutoScaleDimensions = System.Drawing.SizeF(6, 13)
 		self.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
 		self.ClientSize = System.Drawing.Size(584, 478)
-		self.Controls.Add(self.tabControl1)
+		self.Controls.Add(self.MainTabControl)
 		self.Font = System.Drawing.Font("Segoe UI", 8.25, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, cast(System.Byte,0))
 		self.Name = "MainForm"
-		self.Text = "MainForm"
-		self.tabControl1.ResumeLayout(false)
+		self.Text = "Information Retrieval"
+		self.MainTabControl.ResumeLayout(false)
 		self.SettingsTab.ResumeLayout(false)
+		self.QueryTab.ResumeLayout(false)
+		self.QueryTab.PerformLayout()
+		self.StatsTab.ResumeLayout(false)
+		self.StatsTab.PerformLayout()
 		self.ResumeLayout(false)
-	private progressBar1 as System.Windows.Forms.ProgressBar
-	private checkBox2 as System.Windows.Forms.CheckBox
-	private button1 as System.Windows.Forms.Button
-	private checkBox1 as System.Windows.Forms.CheckBox
+	private StatsText as System.Windows.Forms.TextBox
+	private StatsTab as System.Windows.Forms.TabPage
+	private MainTabControl as System.Windows.Forms.TabControl
+	private BuildProgress as System.Windows.Forms.ProgressBar
+	private SearchResultsText as System.Windows.Forms.TextBox
+	private SearchText as System.Windows.Forms.TextBox
+	private SearchButton as System.Windows.Forms.Button
+	private EnableStopwordElimination as System.Windows.Forms.CheckBox
+	private EnablePorterStemming as System.Windows.Forms.CheckBox
+	private BuildIndexButton as System.Windows.Forms.Button
 	private QueryTab as System.Windows.Forms.TabPage
 	private SettingsTab as System.Windows.Forms.TabPage
-	private tabControl1 as System.Windows.Forms.TabControl
+	
+	private def SearchTextKeyDown(sender as object, e as System.Windows.Forms.KeyEventArgs):
+		if e.KeyCode == System.Windows.Forms.Keys.Return:
+			SearchButtonClick(sender, null)
+			e.SuppressKeyPress = true
 
