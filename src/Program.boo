@@ -64,6 +64,13 @@ while input != "quit":
 		
 		print "Shortest posting list:"
 		print "  ${shortestPostingList} document(s)"
+		
+		print "Heaps Law:"
+		print "  k=" + rs.HeapLawK()
+		
+		print "10 Invalid english Words:"
+		for word in rs.GetWordsWithOneOccurrence().GetRange(1, 10):
+			print "  - " + word + " "
 	else:
 		result as List[of Document]
 		try:

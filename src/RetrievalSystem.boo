@@ -4,6 +4,19 @@ import System
 import System.IO
 import System.Collections.Generic
 
+private class WordLengthComparer(IComparer[of String]):		
+"""Sorts Strings by Length Descending"""
+
+	public def Compare(a as String, b as String) as int:
+		if a.Length > b.Length:
+			return -1
+		elif a.Length == b.Length:
+			return 0
+		else:
+			return 1
+			
+	
+
 struct Term(IComparable[of Term]):
 	public ID as int
 	
@@ -132,3 +145,27 @@ class RetrievalSystem:
 			Terms.Add(word, term)
 			Words.Add(term, word)
 		return Terms[word]
+	
+	public def GetWordsWithOneOccurrence() as List[of String]:
+		oneWords = List[of String]()
+		for term as Term in Terms.Values:
+			if RetrieveDocumentsForTerm(term).Count == 1:
+				oneWords.Add(Words[term])
+		# sort them so largest words (which are likely to be invalid
+		# words) appear first in the list
+		oneWords.Sort(WordLengthComparer())
+		
+		return oneWords
+	
+	public def HeapLawK() as int:
+		beta = 0.5
+		V = Terms.Count
+		totalWordCount = 0
+		for document as Document in Documents:
+			totalWordCount += document.NumTerms
+		
+		return (V/(totalWordCount**beta))
+		
+		
+			
+		
