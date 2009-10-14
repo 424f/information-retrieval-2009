@@ -26,8 +26,23 @@ class QueryBuilder:
 			usedWords.Add(word)
 		return ProximityQuery(usedWords.ToArray(), proximity)			
 	
+	static private def InterpretTerm(term as string) as Query:
+		result as Query
+		if term.StartsWith("\""): // Phrase query or proximity query
+			term = term.Substring(1)
+			if term.StartsWith("\\"):
+				term = term.Substring(1)
+				space = term.IndexOf(" ")
+				proximity = int.Parse(term.Substring(0, space))
+				result = ProximityQuery(term.Substring(space + 1), proximity)
+			else:
+				result = PhraseQuery(term.Substring(1))
+		else:
+			result = TermQuery(term)
+		return result
+				
 	static public def BuildQuery(rs as RetrievalSystem, query as string, direction as ParseDirection):
-	"""Query that consits of alternating keywords and operators and might also include phrase queries in quotes"""
+	"""Query that consits of alternating keywords and operators and might also include phrase queries in quotes"""	
 		items = List[of string]()
 		item = ""
 		query += " " // Trailing space makes it easier to parse
@@ -62,16 +77,12 @@ class QueryBuilder:
 			items.Reverse()
 		
 		# Match a term
-		left as Query = (TermQuery(items[0]) if not items[0].StartsWith("\"") else PhraseQuery(items[0].Substring(1)))
+		left as Query = InterpretTerm(items[0])
 		i = 1
 		while i + 1 < items.Count:
 			op = items[i]
 			term = items[i+1]
-			right as Query
-			if term.StartsWith("\""): // Phrase query
-				right = PhraseQuery(term.Substring(1))
-			else:
-				right = TermQuery(term)
+			right as Query = InterpretTerm(term)
 			if op == "not":
 				left = NotQuery(left, right)
 			elif op == "and":

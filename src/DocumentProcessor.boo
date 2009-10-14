@@ -2,7 +2,6 @@ namespace IR
 
 import System
 import System.IO
-import System.Collections
 import System.Collections.Generic
 
 interface IDocumentProcessor:

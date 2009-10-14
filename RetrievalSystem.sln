@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-# SharpDevelop 3.1.0.4977
+# SharpDevelop 3.1.0.4077
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "RetrievalSystem", "RetrievalSystem.booproj", "{107A70A8-5FCB-4599-BEC3-55209844C08A}"
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "GUIClient", "GUIClient\GUIClient.booproj", "{2BD96A2A-E07B-4834-867E-7E263C7A7D16}"

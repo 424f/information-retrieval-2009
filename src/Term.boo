@@ -1,8 +1,6 @@
 ﻿namespace IR
 
 import System
-import System.IO
-import System.Collections.Generic
 
 struct Term(IComparable[of Term]):
 	public ID as int

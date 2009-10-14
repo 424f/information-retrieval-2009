@@ -54,16 +54,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="src\Queries" />
     <Folder Include="tests" />
     <Folder Include="src" />
     <Compile Include="src\Document.boo" />
     <Compile Include="src\DocumentProcessor.boo" />
     <Compile Include="src\Program.boo" />
-    <Compile Include="src\Query.boo" />
+    <Compile Include="src\Queries\AndQuery.boo" />
+    <Compile Include="src\Queries\BinaryQuery.boo" />
+    <Compile Include="src\Queries\IQueryVisitor.boo" />
+    <Compile Include="src\Queries\NotQuery.boo" />
+    <Compile Include="src\Queries\OrQuery.boo" />
+    <Compile Include="src\Queries\ParseDirection.boo" />
+    <Compile Include="src\Queries\PhraseQuery.boo" />
+    <Compile Include="src\Queries\ProximityQuery.boo" />
+    <Compile Include="src\Queries\Query.boo" />
+    <Compile Include="src\Queries\TermQuery.boo" />
     <Compile Include="src\QueryBuilder.boo" />
     <Compile Include="src\QueryProcessor.boo" />
     <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\SetUtils.boo" />
+    <Compile Include="src\SimpleEnumerator.boo" />
     <Compile Include="src\Term.boo" />
     <Compile Include="src\TermRepository.boo" />
     <Compile Include="tests\TestPhraseQueries.boo" />

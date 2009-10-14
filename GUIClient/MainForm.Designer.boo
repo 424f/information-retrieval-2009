@@ -106,11 +106,11 @@ partial class MainForm(System.Windows.Forms.Form):
 		# 
 		# SearchResultsText
 		# 
-		self.SearchResultsText.Location = System.Drawing.Point(7, 36)
+		self.SearchResultsText.Location = System.Drawing.Point(7, 35)
 		self.SearchResultsText.Multiline = true
 		self.SearchResultsText.Name = "SearchResultsText"
 		self.SearchResultsText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-		self.SearchResultsText.Size = System.Drawing.Size(548, 395)
+		self.SearchResultsText.Size = System.Drawing.Size(548, 399)
 		self.SearchResultsText.TabIndex = 2
 		# 
 		# SearchButton
