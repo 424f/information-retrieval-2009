@@ -12,4 +12,4 @@ class QueryResult(IComparable):
 
 	public def CompareTo(other as object) as int:
 		otherResult = other as QueryResult
-		return self.Score.CompareTo(otherResult.Score)
+		return -self.Score.CompareTo(otherResult.Score)

@@ -152,14 +152,16 @@ class RetrievalSystem:
 			score = 0.0
 			for word in words:
 				term = GetTerm(word, false)
+				if term == NullTerm:
+					continue
 
-			if document.TermFrequencies.ContainsKey(term):
-				weight = (1.0 + Math.Log10(document.TermFrequencies[term])) * InverseDocumentFrequency[term]
-				score += weight
+				if document.TermFrequencies.ContainsKey(term):
+					weight = (1.0 + Math.Log10(document.TermFrequencies[term])) * InverseDocumentFrequency[term]
+					score += weight
 		
 			if score > 0.0:
 				result.Add(QueryResult(document, score))
-		
+		result.Sort()
 		return result
 					
 	
