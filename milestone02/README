@@ -1,0 +1,8 @@
+How to build (Windows)
+----------------------
+	1) Download latest boo version (http://boo.codehaus.org/Download) and add bin/ to PATH
+	2) Download nant (http://nant.sourceforge.net/) and add bin/ to PATH
+	3) Edit nant.settings by setting the correct boo binary path
+	4) Run nant in the project directory
+	5) ???
+	6) Profit
