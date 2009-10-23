@@ -91,7 +91,7 @@ while input != "quit":
 		try:
 			
 			before = GetTicks()
-			result = rs.ExecuteQuery(input)
+			result = rs.ExecuteQuery(input, false)
 			dt = GetTicks() - before
 			print "${dt}ms "
 			

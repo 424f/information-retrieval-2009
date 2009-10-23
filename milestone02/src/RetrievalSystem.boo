@@ -142,7 +142,7 @@ class RetrievalSystem:
 		
 		return (V/(totalWordCount**beta))
 		
-	public def ExecuteQuery(query as string) as List[of QueryResult]:
+	public def ExecuteQuery(query as string, includeZeroScore as bool) as List[of QueryResult]:
 	"""Executes a query consisting of possibly multiple words. For vector space queries, we can ignore QueryBuilder and QueryProcessor for now
 	We use:
 		Term frequency: Logarithm (1 + log(tf_td))
@@ -166,7 +166,7 @@ class RetrievalSystem:
 					sqrWeightSum += weight*weight
 					score += weight
 		
-			if score > 0.0:
+			if score > 0.0 or includeZeroScore:
 				result.Add(QueryResult(document, score / Math.Sqrt(sqrWeightSum)))
 		result.Sort()
 		return result
