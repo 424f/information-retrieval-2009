@@ -54,6 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="src\Model" />
     <Folder Include="src\Queries" />
     <Folder Include="tests" />
     <Folder Include="src" />
@@ -72,6 +73,7 @@
     <Compile Include="src\Queries\TermQuery.boo" />
     <Compile Include="src\QueryBuilder.boo" />
     <Compile Include="src\QueryProcessor.boo" />
+    <Compile Include="src\QueryResult.boo" />
     <Compile Include="src\RetrievalSystem.boo" />
     <Compile Include="src\SetUtils.boo" />
     <Compile Include="src\SimpleEnumerator.boo" />

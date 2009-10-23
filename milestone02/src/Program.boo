@@ -69,17 +69,16 @@ while input != "quit":
 		print "  k=" + rs.ComputeHeapsLawK()
 		
 	else:
-		result as List[of Document]
+		result as List[of QueryResult]
 		try:
-			for dir in (ParseDirection.ParseFromRight, ParseDirection.ParseFromLeft):
-				query = QueryBuilder.BuildQuery(rs, input, dir)
-				before = GetTicks()
-				result = processor.ProcessQuery(query)
-				dt = GetTicks() - before
-				print "${dir}: ${dt}ms "
 			
-			for doc in result:
-				System.Console.Write(doc.Title + " ")
+			before = GetTicks()
+			result = rs.ExecuteQuery(input)
+			dt = GetTicks() - before
+			print "${dt}ms "
+			
+			for entry in result:
+				System.Console.Write(entry.Document.Title + " ")
 				# We can now actually retrieve the content
 				#print doc.ReadContent()
 				#print "---"

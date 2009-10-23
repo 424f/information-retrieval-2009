@@ -47,6 +47,12 @@ class DocumentProcessor(IDocumentProcessor):
 				if not occurences.ContainsKey(term):
 					occurences[term] = List[of int]()
 				occurences[term].Add(pos)
+				
+				# Fill in term frequency
+				if not doc.TermFrequencies.ContainsKey(term):
+					doc.TermFrequencies[term] = 0
+				doc.TermFrequencies[term] += 1
+				
 				numTerms += 1
 				pos += 1
 		

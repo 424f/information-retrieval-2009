@@ -1,6 +1,7 @@
 namespace IR
 
 import System
+import System.Collections.Generic
 import System.IO
 
 class Document(IComparable[of Document], IComparable):
@@ -15,6 +16,9 @@ class Document(IComparable[of Document], IComparable):
 	
 	[Property(Path)] _Path as string
 	"""The path where this document is located"""
+	
+	[Property(TermFrequencies)] _TermFrequencies = Dictionary[of Term, int]()
+	"""The binary term vector (one column of the binary incidence matrix)"""
 	
 	[Property(NumTerms)] _NumTerms as int
 	"""Overall number of terms that are part of this document (is set by DocumentProcessor)"""

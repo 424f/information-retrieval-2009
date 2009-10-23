@@ -27,6 +27,7 @@ class RetrievalSystem:
 	protected Documents = List[of Document]()
 	protected Index = Dictionary[of Term, List[of Document]]()
 	protected PositionalIndex = Dictionary[of Term, List[of TermOccurences]]()
+	protected InverseDocumentFrequency = Dictionary[of Term, double]()
 	[Getter(Terms)] _Terms = Dictionary[of string, Term]()
 	protected Words = Dictionary[of Term, string]()
 	protected Stopwords = array(Term, 0)
@@ -71,6 +72,13 @@ class RetrievalSystem:
 		Index[term].Add(e.Document)
 		
 	public def CreateIndex(directory as string):
+		# Calculate document frequency for each term
+		df = Dictionary[of Term, int]()
+		DocumentProcessor.ProcessedTerm += def(sender as object, e as ProcessedTermEventArgs):
+			if not df.ContainsKey(e.Term):
+				df[e.Term] = 0
+			df[e.Term] += 1
+		
 		DocumentProcessor.ProcessedTerm += OnProcessedTerm
 		# Read all files
 		dirInfo = DirectoryInfo(directory)
@@ -86,6 +94,10 @@ class RetrievalSystem:
 		for term in Index.Keys:
 			Index[term].Sort()
 		DocumentProcessor.ProcessedTerm -= OnProcessedTerm
+
+		# Calculate inverse document frequency
+		for term in df.Keys:
+			InverseDocumentFrequency[term] = Math.Log10(NumDocuments / df[term])
 
 	public def CreateQueryProcessor() as QueryProcessor:
 		return QueryProcessor(self)
@@ -130,6 +142,24 @@ class RetrievalSystem:
 		
 		return (V/(totalWordCount**beta))
 		
+	public def ExecuteQuery(query as string) as List[of QueryResult]:
+	"""For vector space queries, we can ignore QueryBuilder and QueryProcessor for now"""
+		splitRule = regex("[^a-zA-Z0-9]")
+		words = splitRule.Split(query)
 		
-			
+		result = List[of QueryResult]()
+		for document in Documents:
+			score = 0.0
+			for word in words:
+				term = GetTerm(word, false)
+
+			if document.TermFrequencies.ContainsKey(term):
+				weight = (1.0 + Math.Log10(document.TermFrequencies[term])) * InverseDocumentFrequency[term]
+				score += weight
 		
+			if score > 0.0:
+				result.Add(QueryResult(document, score))
+		
+		return result
+					
+	
