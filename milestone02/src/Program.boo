@@ -36,38 +36,12 @@ print ""
 print "The power of the AWESOME RETRIEVAL SYSTEM is now at your fingertips."
 print ""
 
-processor = rs.CreateQueryProcessor()
 input = null
 while input != "quit":
 	System.Console.Write("> ")
 	input = System.Console.ReadLine()
 	if input == "quit":	
 		break
-	elif input == "stats":
-		# Size of the term-document matrix (assuming we had one)
-		print "Term-document matrix size:"
-		print "  ${rs.NumDocuments} x ${rs.NumTerms} = ${rs.NumDocuments*rs.NumTerms}"
-		
-		longestPostingList = rs.RetrieveDocumentsForTerm(0).Count 
-		shortestPostingList = longestPostingList
-		print "Number of 1s in this matrix:"
-		numOnes = 0
-		for i in range(rs.NumTerms):
-			numDocuments = rs.RetrieveDocumentsForTerm(i).Count
-			numOnes += numDocuments
-			longestPostingList = Math.Max(longestPostingList, numDocuments)
-			shortestPostingList = Math.Min(shortestPostingList, numDocuments)
-		print "  ${numOnes} (which means ${cast(single, numOnes) / rs.NumDocuments / rs.NumTerms}%)"
-		
-		print "Longest posting list:"
-		print "  ${longestPostingList} document(s) (that's quite a lot)"
-		
-		print "Shortest posting list:"
-		print "  ${shortestPostingList} document(s)"
-		
-		print "Heaps' Law:"
-		print "  k=" + rs.ComputeHeapsLawK()
-		
 	else:
 		result as List[of QueryResult]
 		try:

@@ -143,13 +143,19 @@ class RetrievalSystem:
 		return (V/(totalWordCount**beta))
 		
 	public def ExecuteQuery(query as string) as List[of QueryResult]:
-	"""For vector space queries, we can ignore QueryBuilder and QueryProcessor for now"""
+	"""Executes a query consisting of possibly multiple words. For vector space queries, we can ignore QueryBuilder and QueryProcessor for now
+	We use:
+		Term frequency: Logarithm (1 + log(tf_td))
+		Document frequency: idf (log(N / df_t))
+		Normalization: 1 / sqrt(sum(wi*wi))
+	"""
 		splitRule = regex("[^a-zA-Z0-9]")
 		words = splitRule.Split(query)
 		
 		result = List[of QueryResult]()
 		for document in Documents:
 			score = 0.0
+			sqrWeightSum = 0.0
 			for word in words:
 				term = GetTerm(word, false)
 				if term == NullTerm:
@@ -157,10 +163,11 @@ class RetrievalSystem:
 
 				if document.TermFrequencies.ContainsKey(term):
 					weight = (1.0 + Math.Log10(document.TermFrequencies[term])) * InverseDocumentFrequency[term]
+					sqrWeightSum += weight*weight
 					score += weight
 		
 			if score > 0.0:
-				result.Add(QueryResult(document, score))
+				result.Add(QueryResult(document, score / Math.Sqrt(sqrWeightSum)))
 		result.Sort()
 		return result
 					
