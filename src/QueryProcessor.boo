@@ -53,7 +53,7 @@ class QueryProcessor(IQueryVisitor):
 			positions = List[of List[of int]](words.Length)
 			j = 0
 			for word in words:	
-				term = RetrievalSystem.GetTerm(word)
+				term = RetrievalSystem.GetTerm(word, false)
 				positions.Add(RetrievalSystem.RetrievePositionsForTermInDocument(term, doc))
 				j += 1
 			

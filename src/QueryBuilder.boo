@@ -36,7 +36,7 @@ class QueryBuilder:
 				proximity = int.Parse(term.Substring(0, space))
 				result = ProximityQuery(term.Substring(space + 1), proximity)
 			else:
-				result = PhraseQuery(term.Substring(1))
+				result = PhraseQuery(term)
 		else:
 			result = TermQuery(term)
 		return result
@@ -64,7 +64,7 @@ class QueryBuilder:
 		# Remove all stopwords
 		i = 0
 		while i < items.Count:
-			if rs.IsStopword(rs.GetTerm(items[i])):
+			if rs.IsStopword(rs.GetTerm(items[i], false)):
 				items.RemoveRange(i, (2 if i + 1 < items.Count else 1))
 				continue
 			i += 2

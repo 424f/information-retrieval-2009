@@ -55,7 +55,7 @@ class RetrievalSystem:
 		stopwords = File.ReadAllLines(path)
 		Stopwords = array(Term, stopwords.Length)
 		for i in range(stopwords.Length):
-			Stopwords[i] = GetTerm(stopwords[i].ToUpper().Trim())
+			Stopwords[i] = GetTerm(stopwords[i].ToUpper().Trim(), true)
 		Array.Sort[of Term](Stopwords)
 		
 	public def IsStopword(term as Term):
@@ -91,7 +91,7 @@ class RetrievalSystem:
 		return QueryProcessor(self)
 
 	public def RetrieveDocumentsForWord(word as string) as List[of Document]:
-		term = GetTerm(word)
+		term = GetTerm(word, false)
 		return RetrieveDocumentsForTerm(term)
 		
 	public def RetrieveDocumentsForTerm(term as Term) as List[of Document]:
@@ -107,12 +107,13 @@ class RetrievalSystem:
 	public def RetrievePositionsForTermInDocument(term as Term, doc as Document) as List[of int]:
 		return PositionalIndex[term].Find({ to as TermOccurences | to.Document == doc }).Occurences
 
-	public def GetTerm(word as string) as Term:
-		return NullTerm if word == null
+	public def GetTerm(word as string, create as bool) as Term:
+		return NullTerm if word == null 
 		word = word.ToLower().Trim()
 		if EnableStemming:
 			word = PorterStemmer.stemTerm(word)
 		if not Terms.ContainsKey(word):
+			return NullTerm if not create
 			term = Term()
 			term.ID = NumTerms
 			_NumTerms += 1

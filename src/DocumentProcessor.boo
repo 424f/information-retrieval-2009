@@ -40,7 +40,7 @@ class DocumentProcessor(IDocumentProcessor):
 			for word in words:
 				word = word.Trim()
 				continue if word.Length == 0
-				term = RetrievalSystem.GetTerm(word)
+				term = RetrievalSystem.GetTerm(word, true)
 				i = terms.BinarySearch(term)
 				if i < 0:
 					terms.Insert(~i, term)			
