@@ -8,6 +8,8 @@ Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "GUIClient", "GUIClient\GUIC
 EndProject
 Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "FrequencyExample", "FrequencyExample\FrequencyExample.booproj", "{F39B36A5-070E-45E7-8823-B45A889E05BA}"
 EndProject
+Project("{A33008B1-5DAC-44D5-9060-242E3B6E38F2}") = "DiagramTool", "DiagramTool\DiagramTool.booproj", "{E99EFFDD-5F09-4ED1-9687-12934AF2CC03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +28,9 @@ Global
 		{F39B36A5-070E-45E7-8823-B45A889E05BA}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{F39B36A5-070E-45E7-8823-B45A889E05BA}.Release|Any CPU.Build.0 = Release|x86
 		{F39B36A5-070E-45E7-8823-B45A889E05BA}.Release|Any CPU.ActiveCfg = Release|x86
+		{E99EFFDD-5F09-4ED1-9687-12934AF2CC03}.Debug|Any CPU.Build.0 = Debug|x86
+		{E99EFFDD-5F09-4ED1-9687-12934AF2CC03}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E99EFFDD-5F09-4ED1-9687-12934AF2CC03}.Release|Any CPU.Build.0 = Release|x86
+		{E99EFFDD-5F09-4ED1-9687-12934AF2CC03}.Release|Any CPU.ActiveCfg = Release|x86
 	EndGlobalSection
 EndGlobal

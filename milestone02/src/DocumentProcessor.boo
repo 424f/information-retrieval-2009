@@ -20,7 +20,7 @@ class ProcessedTermEventArgs(EventArgs):
 
 class DocumentProcessor(IDocumentProcessor):
 """Processes the text of a document according to certain rules"""
-	static protected SplitRule = regex("[^a-zA-Z0-9]")
+	static protected SplitRule = regex("[^a-zA-Z0-9\\.\\-]")
 	protected RetrievalSystem as RetrievalSystem
 
 	public event ProcessedTerm as EventHandler[of ProcessedTermEventArgs]

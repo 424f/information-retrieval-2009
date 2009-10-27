@@ -122,6 +122,16 @@ class RetrievalSystem:
 	public def GetTerm(word as string, create as bool) as Term:
 		return NullTerm if word == null 
 		word = word.ToLower().Trim()
+		
+		# Remove non-alpha, non-numeric characters
+		i = 0
+		while i < len(word):
+			c = word[i]
+			if not char.IsLetterOrDigit(c):
+				word = word.Remove(i, 1)
+				i -= 1
+			i += 1
+		
 		if EnableStemming:
 			word = PorterStemmer.stemTerm(word)
 		if not Terms.ContainsKey(word):
@@ -149,7 +159,7 @@ class RetrievalSystem:
 		Document frequency: idf (log(N / df_t))
 		Normalization: 1 / sqrt(sum(wi*wi))
 	"""
-		splitRule = regex("[^a-zA-Z0-9]")
+		splitRule = regex("[^a-zA-Z0-9\\.\\-]")
 		words = splitRule.Split(query)
 		
 		result = List[of QueryResult]()
@@ -158,16 +168,19 @@ class RetrievalSystem:
 			sqrWeightSum = 0.0
 			for word in words:
 				term = GetTerm(word, false)
-				if term == NullTerm:
+				if term == NullTerm or IsStopword(term):
 					continue
 
 				if document.TermFrequencies.ContainsKey(term):
 					weight = (1.0 + Math.Log10(document.TermFrequencies[term])) * InverseDocumentFrequency[term]
 					sqrWeightSum += weight*weight
 					score += weight
-		
-			if score > 0.0 or includeZeroScore:
+
+			if score > 0.0:
 				result.Add(QueryResult(document, score / Math.Sqrt(sqrWeightSum)))
+			elif includeZeroScore:
+				result.Add(QueryResult(document, 0.0))
+				
 		result.Sort()
 		return result
 					

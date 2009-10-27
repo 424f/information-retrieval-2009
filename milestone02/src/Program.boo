@@ -68,12 +68,12 @@ while input != "quit":
 				
 			path = Path.Combine(dirInfo.ToString(), q.Name)
 			query = File.ReadAllText(path)
-			rslt = rs.ExecuteQuery(query)
+			rslt = rs.ExecuteQuery(query, true)
 			
 			qnumber = q.Name[1:]
 			relevantDocsFound = 0.0
 			sw = StreamWriter("data/TIME/Queries/Plots/${q.Name}.dat")
-			sw.WriteLine( "0 1")
+			sw.WriteLine("0 1")
 			for entry as QueryResult in rslt:
 				docNr = int.Parse(entry.Document.Title[3:])
 				if relevantDocs.ContainsKey(qnumber):
