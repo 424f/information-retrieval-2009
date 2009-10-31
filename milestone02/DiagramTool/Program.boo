@@ -88,9 +88,9 @@ for q in files:
 	# Run for each retrieval system configuration
 	WritePlotFile("data/TIME/Plots/${q.Name}.gnuplot", q.Name, settingNames)
 	sw = StreamWriter("data/TIME/Plots/${q.Name}.dat")
-	bias = -0.005 - 0.0025
+	bias = 0.0 #-0.005 - 0.0025
 	for rs in retrievalSystems:
-		bias += 0.0025
+		bias += 0.00 #25
 		rslt = rs.ExecuteQuery(query, true)
 		
 		relevantDocsFound = 0.0

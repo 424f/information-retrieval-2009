@@ -177,7 +177,7 @@ class RetrievalSystem:
 					score += weight
 
 			if score > 0.0:
-				result.Add(QueryResult(document, score / Math.Sqrt(sqrWeightSum)))
+				result.Add(QueryResult(document, score)) // / Math.Sqrt(sqrWeightSum)))
 			elif includeZeroScore:
 				result.Add(QueryResult(document, 0.0))
 				
