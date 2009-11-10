@@ -40,6 +40,7 @@ def WritePlotFile(path as string, plotName as string, titles as (string)):
 dirInfo = DirectoryInfo("data/TIME/Queries")
 settingNames = ("Standard", "Stemming", "Stopword Elimination", "Stemming & Stopword Elimination")
 retrievalSystems = List[of RetrievalSystem]()
+dirs = ("Basic", "LocalQueryExpansion0.5", "LocalQueryExpansion0.25", "LocalQueryExpansion0.75", "GlobalQueryExpansion")
 
 rs = IR.RetrievalSystem()
 rs.CreateIndex("data/TIME/Docs")
@@ -74,77 +75,88 @@ for line in rlines:
 		if doc != "":
 			relevantDocs[queryNumber].Add(int.Parse(doc))
 
-
-files = dirInfo.GetFiles()
-for q in files:
-	if q.Name == "RelevancyLists.txt":
-		continue
+for dir in dirs:
+	files = dirInfo.GetFiles()
+	IO.Directory.CreateDirectory("data/TIME/Plots/${dir}")
+	for q in files:
+		if q.Name == "RelevancyLists.txt":
+			continue
+			
+		path = Path.Combine(dirInfo.ToString(), q.Name)
+		query = File.ReadAllText(path)
 		
-	path = Path.Combine(dirInfo.ToString(), q.Name)
-	query = File.ReadAllText(path)
+		qnumber = q.Name[1:]
+		
+		# Run for each retrieval system configuration
+		WritePlotFile("data/TIME/Plots/${dir}/${q.Name}.gnuplot", q.Name, settingNames)
+		sw = StreamWriter("data/TIME/Plots/${dir}/${q.Name}.dat")
+		bias = 0.0 #-0.005 - 0.0025
+		for rs as IR.RetrievalSystem in retrievalSystems:
+			rs.EnableGlobalQueryExpansion = (dir == "GlobalQueryExpansion")
+			localExpansion = (dir.StartsWith("LocalQueryExpansion"))
+			alpha = 0.0
+			if localExpansion:
+				alpha = double.Parse(dir.Substring("LocalQueryExpansion".Length))
+				print "Using alpha=${alpha}"
+			
+			bias += 0.00 #25
+			if localExpansion:
+				rslt = rs.ExecuteQueryWithLocalExpansion(query, true, alpha)
+			else:
+				rslt = rs.ExecuteQuery(query, true)
+			
+			relevantDocsFound = 0.0
+			docsFound = 0.0
+			
+			interpolated = List[of Point]()
+			interpolated.Add(Point(0.0, 1.0))
+			for entry as QueryResult in rslt:
+				docNr = int.Parse(entry.Document.Title[3:])
+				if relevantDocs.ContainsKey(qnumber):
+					if docNr in relevantDocs[qnumber]:
+						relevantDocsFound += 1
+					docsFound += 1
+					recall = relevantDocsFound / relevantDocs[qnumber].Count
+					precision = relevantDocsFound / docsFound
+					interpolated.Add(Point(recall, precision))
+		
+			// Create interpolated plot	
+			i = interpolated.Count - 1
+			while i > 0:
+				if interpolated[i-1].MaxPrecision < interpolated[i].MaxPrecision:
+					interpolated[i-1] = Point(interpolated[i-1], interpolated[i].MaxPrecision)
+				i -= 1
+		
+			// Write plot file
+			/*for p in interpolated:
+				sw.WriteLine("${p.Recall} ${p.Precision}")
+			sw.WriteLine()
+			sw.WriteLine()*/
+			
+			lastP = 1.0
+			lastR = 0.0
+			sw.WriteLine("${bias} ${1.0+bias}")
+			for i in range(interpolated.Count):
+				p = interpolated[i]
+				sw.WriteLine("${p.Recall+bias} ${p.MaxPrecision+bias}")
+				/*if p.Recall != lastR or i == interpolated.Count - 1:
+					sw.WriteLine("${lastR+bias} ${p.Precision+bias}")
+					lastP = p.MaxPrecision
+					lastR = p.Recall
+					sw.WriteLine("${p.Recall+bias} ${p.Precision+bias}")*/
+			sw.WriteLine()
+			sw.WriteLine()
 	
-	qnumber = q.Name[1:]
+			/*bias += 0.0025
+			for i in range(interpolated.Count):
+				p = interpolated[i]
+				sw.WriteLine("${p.Recall+bias} ${p.Precision+bias}")
 	
-	# Run for each retrieval system configuration
-	WritePlotFile("data/TIME/Plots/${q.Name}.gnuplot", q.Name, settingNames)
-	sw = StreamWriter("data/TIME/Plots/${q.Name}.dat")
-	bias = 0.0 #-0.005 - 0.0025
-	for rs in retrievalSystems:
-		bias += 0.00 #25
-		rslt = rs.ExecuteQuery(query, true)
-		
-		relevantDocsFound = 0.0
-		docsFound = 0.0
-		
-		interpolated = List[of Point]()
-		interpolated.Add(Point(0.0, 1.0))
-		for entry as QueryResult in rslt:
-			docNr = int.Parse(entry.Document.Title[3:])
-			if relevantDocs.ContainsKey(qnumber):
-				if docNr in relevantDocs[qnumber]:
-					relevantDocsFound += 1
-				docsFound += 1
-				recall = relevantDocsFound / relevantDocs[qnumber].Count
-				precision = relevantDocsFound / docsFound
-				interpolated.Add(Point(recall, precision))
-	
-		// Create interpolated plot	
-		i = interpolated.Count - 1
-		while i > 0:
-			if interpolated[i-1].MaxPrecision < interpolated[i].MaxPrecision:
-				interpolated[i-1] = Point(interpolated[i-1], interpolated[i].MaxPrecision)
-			i -= 1
-	
-		// Write plot file
-		/*for p in interpolated:
-			sw.WriteLine("${p.Recall} ${p.Precision}")
-		sw.WriteLine()
-		sw.WriteLine()*/
-		
-		lastP = 1.0
-		lastR = 0.0
-		sw.WriteLine("${bias} ${1.0+bias}")
-		for i in range(interpolated.Count):
-			p = interpolated[i]
-			sw.WriteLine("${p.Recall+bias} ${p.MaxPrecision+bias}")
-			/*if p.Recall != lastR or i == interpolated.Count - 1:
-				sw.WriteLine("${lastR+bias} ${p.Precision+bias}")
-				lastP = p.MaxPrecision
-				lastR = p.Recall
-				sw.WriteLine("${p.Recall+bias} ${p.Precision+bias}")*/
-		sw.WriteLine()
-		sw.WriteLine()
-
-		/*bias += 0.0025
-		for i in range(interpolated.Count):
-			p = interpolated[i]
-			sw.WriteLine("${p.Recall+bias} ${p.Precision+bias}")
-
-		sw.WriteLine()
-		sw.WriteLine()		*/
-		
-		print "${q.Name} found ${relevantDocsFound}, returned ${rslt.Count}"
-	sw.Close()
+			sw.WriteLine()
+			sw.WriteLine()		*/
+			
+			print "${q.Name} found ${relevantDocsFound}, returned ${rslt.Count}"
+		sw.Close()
 
 print "Press any key to continue . . . "
 Console.ReadKey(true)

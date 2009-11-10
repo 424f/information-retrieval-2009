@@ -37,6 +37,7 @@ class RetrievalSystem:
 	protected PorterStemmer = PorterStemmerAlgorithm.PorterStemmer()
 	
 	[Property(EnableStemming)] _EnableStemming = false
+	[Property(EnableGlobalQueryExpansion)] _EnableGlobalQueryExpansion = false
 	
 	public NullTerm:
 		get: return _NullTerm
@@ -98,7 +99,19 @@ class RetrievalSystem:
 		# Calculate inverse document frequency
 		for term in df.Keys:
 			InverseDocumentFrequency[term] = Math.Log10(NumDocuments / df[term])
-
+		
+		# Calculate tf-idf and normalize
+		for document in Documents:
+			length = 0.0
+			for term in document.TermFrequencies.Keys:
+				tfidf = (1.0 + Math.Log10(document.TermFrequencies[term])) * InverseDocumentFrequency[term]
+				document.TfIdf[term] = tfidf
+				length += tfidf * tfidf
+			norm = 1.0 / Math.Sqrt(length)
+			for term in document.TermFrequencies.Keys:
+				document.TfIdf[term] = document.TfIdf[term] * norm
+			
+		
 	public def CreateQueryProcessor() as QueryProcessor:
 		return QueryProcessor(self)
 
@@ -152,32 +165,81 @@ class RetrievalSystem:
 		
 		return (V/(totalWordCount**beta))
 		
+	public def GetQueryVector(query as string) as Dictionary[of Term, double]:
+		splitRule = regex("[^a-zA-Z0-9\\.\\-]")
+		words = List[of string](splitRule.Split(query))
+		if EnableGlobalQueryExpansion:
+			for word in List[of string](words):
+				for synonym in WordNet.NounSynonyms(word):
+					for part in splitRule.Split(synonym):
+						words.Add(part)
+		vectorQuery = Dictionary[of Term, double]()
+		for word in words:
+			term = GetTerm(word, false)
+			vectorQuery[term] = (1.0 if not vectorQuery.ContainsKey(term) else 1.0 + vectorQuery[term])		
+		NormalizeVector(vectorQuery)
+		return vectorQuery
+
+	public def NormalizeVector(ref vec as Dictionary[of Term, double]):
+		sumSqr = 0.0
+		for term in vec.Keys:
+			w = vec[term]
+			sumSqr += w * w
+		sumSqr = 1.0 / Math.Sqrt(sumSqr)
+		for term in array(vec.Keys):
+			vec[term] = vec[term] * sumSqr		
+		
+	public def ExecuteQueryWithLocalExpansion(query as string, includeZeroScore as bool, alpha as double) as List[of QueryResult]:
+		vector = GetQueryVector(query)
+		d = ExecuteQuery(vector, true)[0]
+		
+		# Modify query vector
+		# See (http://nlp.stanford.edu/IR-book/html/htmledition/the-rocchio71-algorithm-1.html) for a explanation
+		# We're using gamma = 0.0 here and only one (hopefully) relevant document
+		# q[m] = alpha*q[0] + (1.0 - alpha)*dj
+		newVector = Dictionary[of Term, double]()
+		for term in vector.Keys:
+			newVector[term] = alpha * vector[term]
+			
+		for term in d.Document.TfIdf.Keys:
+			if not newVector.ContainsKey(term):
+				newVector[term] = 0.0
+			newVector[term] = newVector[term] + (1 - alpha)*d.Document.TfIdf[term]
+		
+		return ExecuteQuery(newVector, includeZeroScore)
+		
 	public def ExecuteQuery(query as string, includeZeroScore as bool) as List[of QueryResult]:
+		return ExecuteQuery(GetQueryVector(query), includeZeroScore)
+
+	public def ExecuteQuery(query as Dictionary[of Term, double], includeZeroScore as bool) as List[of QueryResult]:
 	"""Executes a query consisting of possibly multiple words. For vector space queries, we can ignore QueryBuilder and QueryProcessor for now
 	We use:
 		Term frequency: Logarithm (1 + log(tf_td))
 		Document frequency: idf (log(N / df_t))
 		Normalization: 1 / sqrt(sum(wi*wi))
-	"""
-		splitRule = regex("[^a-zA-Z0-9\\.\\-]")
-		words = splitRule.Split(query)
+	"""	
+		// Debug
+		/*for term in query.Keys:
+			Console.Write(("??" if not Words.ContainsKey(term) else Words[term]) + " ")
+		Console.WriteLine()*/
+	
+		// Normalize the query vector
+		NormalizeVector(query)
 		
+		// Retrieve documents
 		result = List[of QueryResult]()
 		for document in Documents:
 			score = 0.0
-			sqrWeightSum = 0.0
-			for word in words:
-				term = GetTerm(word, false)
+			for term in query.Keys:
 				if term == NullTerm or IsStopword(term):
 					continue
 
 				if document.TermFrequencies.ContainsKey(term):
-					weight = (1.0 + Math.Log10(document.TermFrequencies[term])) * InverseDocumentFrequency[term]
-					sqrWeightSum += weight*weight
-					score += weight
-
+					weight = document.TfIdf[term]
+					score += weight * query[term]
+			
 			if score > 0.0:
-				result.Add(QueryResult(document, score)) // / Math.Sqrt(sqrWeightSum)))
+				result.Add(QueryResult(document, score))
 			elif includeZeroScore:
 				result.Add(QueryResult(document, 0.0))
 				

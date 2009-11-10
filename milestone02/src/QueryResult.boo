@@ -4,7 +4,7 @@ import System
 
 class QueryResult(IComparable):
 	[Getter(Document)] _Document as Document
-	[Getter(Score)] _Score as double
+	[Property(Score)] _Score as double
 	
 	public def constructor(document as Document, score as double):
 		_Document = document

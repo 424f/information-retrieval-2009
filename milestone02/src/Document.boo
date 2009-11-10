@@ -17,6 +17,9 @@ class Document(IComparable[of Document], IComparable):
 	[Property(Path)] _Path as string
 	"""The path where this document is located"""
 	
+	[Property(TfIdf)] _TfIdf = Dictionary[of Term, double]()
+	"""The normalized tf-idf weight"""
+	
 	[Property(TermFrequencies)] _TermFrequencies = Dictionary[of Term, int]()
 	"""The binary term vector (one column of the binary incidence matrix)"""
 	

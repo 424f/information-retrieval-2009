@@ -38,54 +38,12 @@ print ""
 print "The power of the AWESOME RETRIEVAL SYSTEM is now at your fingertips."
 print ""
 
-input = null
+input as string = null
 while input != "quit":
 	System.Console.Write("> ")
 	input = System.Console.ReadLine()
 	if input == "quit":	
-		break
-	if input == "plot":
-		dirInfo = DirectoryInfo("data/TIME/Queries")
-		
-		relevantDocs = Dictionary[of String, List[of int]]()
-		# load relevancy list
-		rfile = Path.Combine(dirInfo.ToString(), "RelevancyLists.txt")
-		rlines = File.ReadAllLines(rfile)
-		
-		for line in rlines:
-			rdocs = line.Split()
-			queryNumber = rdocs[0] as String
-			relevantDocs[queryNumber] = List[of int]()
-			for doc in rdocs[1:]:
-				if doc != "":
-					relevantDocs[queryNumber].Add(int.Parse(doc))
-		
-		
-		files = dirInfo.GetFiles()
-		for q in files:
-			if q.Name == "RelevancyLists.txt":
-				continue
-				
-			path = Path.Combine(dirInfo.ToString(), q.Name)
-			query = File.ReadAllText(path)
-			rslt = rs.ExecuteQuery(query, true)
-			
-			qnumber = q.Name[1:]
-			relevantDocsFound = 0.0
-			sw = StreamWriter("data/TIME/Queries/Plots/${q.Name}.dat")
-			sw.WriteLine("0 1")
-			for entry as QueryResult in rslt:
-				docNr = int.Parse(entry.Document.Title[3:])
-				if relevantDocs.ContainsKey(qnumber):
-					if docNr in relevantDocs[qnumber]:
-						relevantDocsFound += 1
-					recall = relevantDocsFound / relevantDocs[qnumber].Count
-					precision = relevantDocsFound / (relevantDocs[qnumber].Count - relevantDocsFound)
-					sw.WriteLine( "${recall} ${precision}")
-			sw.Close()
-			print "${q.Name} found ${relevantDocsFound}"
-
-			
+		break			
 	else:
 		result as List[of QueryResult]
 		try:

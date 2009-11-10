@@ -79,6 +79,7 @@
     <Compile Include="src\SimpleEnumerator.boo" />
     <Compile Include="src\Term.boo" />
     <Compile Include="src\TermRepository.boo" />
+    <Compile Include="src\WordNet.boo" />
     <Compile Include="tests\TestPhraseQueries.boo" />
     <Compile Include="tests\TestProximitySearch.boo" />
     <Compile Include="tests\TestRetrievalSystem.boo" />
