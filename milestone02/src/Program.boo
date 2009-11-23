@@ -54,7 +54,7 @@ while input != "quit":
 			print "${dt}ms "
 			
 			for entry in result:
-				System.Console.Write(entry.Document.Title + " ")
+				System.Console.Write("${entry.Score} ${entry.Document.Title}\n")
 				# We can now actually retrieve the content
 				#print doc.ReadContent()
 				#print "---"

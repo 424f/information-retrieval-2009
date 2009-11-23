@@ -40,7 +40,7 @@ def WritePlotFile(path as string, plotName as string, titles as (string)):
 dirInfo = DirectoryInfo("data/TIME/Queries")
 settingNames = ("Standard", "Stemming", "Stopword Elimination", "Stemming & Stopword Elimination")
 retrievalSystems = List[of RetrievalSystem]()
-dirs = ("Basic", "LocalQueryExpansion0.5", "LocalQueryExpansion0.25", "LocalQueryExpansion0.75", "GlobalQueryExpansion")
+dirs = ("GlobalQueryExpansion",)
 
 rs = IR.RetrievalSystem()
 rs.CreateIndex("data/TIME/Docs")
@@ -121,10 +121,18 @@ for dir in dirs:
 					interpolated.Add(Point(recall, precision))
 		
 			// Create interpolated plot	
+			def findMax(recall as double):
+				max = -1.0
+				for x in interpolated:
+					if x.Recall >= recall and x.Precision > max:
+						max = x.Precision
+				return max
+			
 			i = interpolated.Count - 1
 			while i > 0:
-				if interpolated[i-1].MaxPrecision < interpolated[i].MaxPrecision:
-					interpolated[i-1] = Point(interpolated[i-1], interpolated[i].MaxPrecision)
+				interpolated[i] = Point(interpolated[i-1], findMax(interpolated[i].Recall))
+				/*if interpolated[i-1].MaxPrecision < interpolated[i].MaxPrecision:
+					interpolated[i-1] = Point(interpolated[i-1], interpolated[i].MaxPrecision)*/
 				i -= 1
 		
 			// Write plot file
